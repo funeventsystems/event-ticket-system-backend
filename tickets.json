@@ -1,6 +1,15 @@
-{
+[
+  {
     "id": "1",
-    "date" : "test",
-    "email" : "email",
-    "livestreamurl" : "livestreamurl"
-  }
+    "date": "2023-10-10",
+    "email": "example1@example.com",
+    "livestreamurl": "https://example.com/livestream1"
+  },
+  {
+    "id": "2",
+    "date": "2023-10-15",
+    "email": "example2@example.com",
+    "livestreamurl": "https://example.com/livestream2"
+  },
+  // More ticket objects...
+]
