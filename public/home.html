@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .result {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ticket Lookup</h1>
+    </header>
+    <div class="container">
+        <h1>Lookup Ticket</h1>
+        <form id="lookup-form">
+            <label for="ticketId">Ticket ID:</label>
+            <input type="text" id="ticketId" name="ticketId" required>
+            <button type="submit">Lookup</button>
+        </form>
+        <div class="result" id="ticket-result"></div>
+    </div>
+
+    <script>
+        const lookupForm = document.getElementById('lookup-form');
+        const ticketIdInput = document.getElementById('ticketId');
+        const ticketResult = document.getElementById('ticket-result');
+
+        lookupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ticketId = ticketIdInput.value;
+            const response = await fetch(`/api/ticket/${ticketId}`);
+            const data = await response.json();
+            if (response.ok) {
+                ticketResult.innerHTML = `<p>Ticket ID: ${data.id}</p><p>Date: ${data.date}</p><p>Email: ${data.email}</p><p>Livestream URL: ${data.livestreamurl}</p>`;
+            } else {
+                ticketResult.innerHTML = `<p>${data.error}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
