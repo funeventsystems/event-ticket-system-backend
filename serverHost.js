@@ -89,7 +89,7 @@ async function generatePDF(registerData) {
     doc.on('error', reject);
 
     // Add an image for the show's logo
-    doc.image('path_to_logo_image.png', 50, 50, { width: 100 });
+    doc.image('mastermindsbook.jpg', 50, 50, { width: 100 });
 
     // Title and show information
     doc.fontSize(20).text('MASTERMINDS Show Ticket', 200, 50);
