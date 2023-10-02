@@ -41,7 +41,7 @@ app.post('/api/registershow', (req, res) => {
   newRegister.id = uniqueId;
 
   // Check if the date matches a specific date to set the livestream URL
-  if (newRegister.date === '2023-10-10') {
+  if (newRegister.date === '1') {
     newRegister.livestreamurl = 'https://example.com/livestream-url'; // Set the specific URL
   }
 
