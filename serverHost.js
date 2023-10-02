@@ -11,11 +11,15 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
 const staticDir = path.join(__dirname, 'public');
+const secrets = require('./secrets.json'); // Load email credentials
 
 app.use(express.static(staticDir));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
+});
+app.get('/home', (req, res) => {
+  res.sendFile(path.join(staticDir, 'home.html'));
 });
 
 
@@ -112,10 +116,10 @@ async function generatePDF(registerData) {
 
 async function sendEmail(registerData, pdfBuffer) {
   const transporter = nodemailer.createTransport({
-    service: 'your-email-service-provider',
+    service: 'Gmail',
     auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-email-password',
+      user: secrets.email, // Use email from secrets.json
+      pass: secrets.password, // Use password from secrets.json
     },
   });
 
