@@ -133,9 +133,12 @@ async function sendEmail(registerData, pdfBuffer) {
       <body>
         <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
         <p>Your selected date is: ${registerData.date}</p>
+        <p> The livestream starts a 7:00, with the waiting room opening at 6:30 PM</p>
         <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
         <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
         <a href="mailto:contact@show.com">Contact@show.com</a>
+        <p> All times are displayed in Mountain Time </p>
+        <p> Enjoy the show! - Masterminds Team</p>
         
         <!-- Check if there is a livestream URL and include it in the email -->
         ${registerData.livestreamurl ? `<p>Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>` : ''}
