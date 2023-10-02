@@ -9,8 +9,15 @@ const crypto = require('crypto'); // Import crypto for generating a random ID
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
+// Define the directory where your static HTML files are located
+const staticDir = path.join(__dirname, 'public');
+
+// Serve static files from the "public" directory
+app.use(express.static(staticDir));
+
+// Define a route to serve your HTML page
 app.get('/', (req, res) => {
-  res.sendFile(path.join('index.html'));
+  res.sendFile(path.join(staticDir, 'index.html'));
 });
 app.get('/api/ticket/:ticketId', (req, res) => {
   const tickets = JSON.parse(fs.readFileSync('tickets.json'));
