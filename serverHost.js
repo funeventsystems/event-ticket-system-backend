@@ -109,6 +109,8 @@ async function sendEmail(registerData) {
         <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
         <p>Your selected date is: ${registerData.date}</p> <!-- Include the selected date here -->
         <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
+        <p><strong> If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
+        <a href="mailto:contact@show.com">Contact@show.com</a>
         
         <!-- Check if there is a livestream URL and include it in the email -->
         ${registerData.livestreamurl ? `<p>Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>` : ''}
