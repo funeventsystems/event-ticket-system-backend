@@ -4,21 +4,21 @@ const fs = require('fs');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const nodemailer = require('nodemailer');
-const crypto = require('crypto'); // Import crypto for generating a random ID
+const crypto = require('crypto');
+const PDFDocument = require('pdfkit'); // Import PDFKit for PDF generation
 
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
-// Define the directory where your static HTML files are located
 const staticDir = path.join(__dirname, 'public');
 
-// Serve static files from the "public" directory
 app.use(express.static(staticDir));
 
-// Define a route to serve your HTML page
 app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
+
+
 app.get('/api/ticket/:ticketId', (req, res) => {
   // Read the JSON data from the 'tickets.json' file
   const rawData = fs.readFileSync('tickets.json');
@@ -41,38 +41,29 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 });
 
 
-app.post('/api/registershow', (req, res) => {
+app.post('/api/registershow', async (req, res) => {
   const newRegister = req.body;
-
-  // Read the upcoming missions from the JSON file
   const upcomingRegister = JSON.parse(fs.readFileSync('tickets.json'));
-
-  // Generate a unique 15-character ID
   const uniqueId = generateUniqueId(15);
-
-  // Assign the unique ID to the new mission
   newRegister.id = uniqueId;
 
-  // Check if the date matches a specific date to set the livestream URL
   if (newRegister.date === '1') {
-    newRegister.livestreamurl = 'https://youtube.com'; // Set the specific URL
+    newRegister.livestreamurl = 'https://youtube.com';
   }
 
-  // Add the new mission to the upcoming missions array
   upcomingRegister.push(newRegister);
-
-  // Save the updated upcoming missions array to the JSON file
   fs.writeFileSync('tickets.json', JSON.stringify(upcomingRegister, null, 2));
 
-  // Send an email with all the information to the provided email address
-  sendEmail(newRegister)
-    .then(() => {
-      res.json({ message: 'Registration added successfully', register: newRegister });
-    })
-    .catch((error) => {
-      console.error('Error sending email:', error);
-      res.status(500).json({ error: 'An error occurred while sending the email' });
-    });
+  // Generate PDF and send email
+  try {
+    const pdfBuffer = await generatePDF(newRegister);
+    await sendEmail(newRegister, pdfBuffer);
+
+    res.json({ message: 'Registration added successfully', register: newRegister });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'An error occurred while sending the email' });
+  }
 });
 
 // Function to generate a unique ID
@@ -85,19 +76,31 @@ function generateUniqueId(length) {
   }
   return id;
 }
+async function generatePDF(registerData) {
+  const doc = new PDFDocument();
+  const pdfBufferPromise = new Promise((resolve, reject) => {
+    const pdfBuffer = [];
+    doc.on('data', (chunk) => pdfBuffer.push(chunk));
+    doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
+    doc.on('error', reject);
 
-// Function to send an email
-// Function to send an email
-async function sendEmail(registerData) {
+    doc.text(`Access ID: ${registerData.id}`);
+    doc.text(`Selected Date: ${registerData.date}`);
+    // Add more information as needed
+
+    doc.end();
+  });
+    return pdfBufferPromise;
+}
+
   const transporter = nodemailer.createTransport({
-    service: 'your-email-service-provider', // E.g., 'Gmail', 'Outlook'
+    service: 'your-email-service-provider',
     auth: {
-      user: 'your-email@gmail.com', // Your email address
-      pass: 'your-email-password', // Your email password or an application-specific password
+      user: 'your-email@gmail.com',
+      pass: 'your-email-password',
     },
   });
 
-  // Define the HTML content of the email
   const htmlContent = `
     <html>
       <head>
@@ -107,9 +110,9 @@ async function sendEmail(registerData) {
       </head>
       <body>
         <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
-        <p>Your selected date is: ${registerData.date}</p> <!-- Include the selected date here -->
+        <p>Your selected date is: ${registerData.date}</p>
         <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
-        <p><strong> If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
+        <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
         <a href="mailto:contact@show.com">Contact@show.com</a>
         
         <!-- Check if there is a livestream URL and include it in the email -->
@@ -119,11 +122,16 @@ async function sendEmail(registerData) {
   `;
 
   const mailOptions = {
-    from: 'your-email@gmail.com', // Sender's email address
-    to: registerData.email, // Receiver's email address from the registration data
+    from: 'your-email@gmail.com',
+    to: registerData.email,
     subject: 'Registration Confirmation',
-    // text: `Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}. This can be used on the MASTERMINDS digital ticket page, online.mastermindsshow.com.`,
-    html: htmlContent, // Use the HTML content defined above
+    html: htmlContent,
+    attachments: [
+      {
+        filename: 'DigitalID.pdf',
+        content: pdfBuffer,
+      },
+    ],
   };
 
   await transporter.sendMail(mailOptions);
