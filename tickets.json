@@ -10,6 +10,5 @@
     "date": "2023-10-15",
     "email": "example2@example.com",
     "livestreamurl": "https://example.com/livestream2"
-  },
-  // More ticket objects...
+  }
 ]
