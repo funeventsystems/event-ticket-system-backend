@@ -87,6 +87,7 @@ function generateUniqueId(length) {
 }
 
 // Function to send an email
+// Function to send an email
 async function sendEmail(registerData) {
   const transporter = nodemailer.createTransport({
     service: 'your-email-service-provider', // E.g., 'Gmail', 'Outlook'
@@ -96,15 +97,35 @@ async function sendEmail(registerData) {
     },
   });
 
+  // Define the HTML content of the email
+  const htmlContent = `
+    <html>
+      <head>
+        <style>
+          /* Add any CSS styling you want for your email here */
+        </style>
+      </head>
+      <body>
+        <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
+        <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
+        
+        <!-- Check if there is a livestream URL and include it in the email -->
+        ${registerData.livestreamurl ? `<p>Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>` : ''}
+      </body>
+    </html>
+  `;
+
   const mailOptions = {
     from: 'your-email@gmail.com', // Sender's email address
     to: registerData.email, // Receiver's email address from the registration data
     subject: 'Registration Confirmation',
-    text: `Thank you for registering for the event. Your ur unique  IDis:    ${registerData.id}`,
+    text: `Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}. This can be used on the MASTERMINDS digital ticket page, online.mastermindsshow.com.`,
+    html: htmlContent, // Use the HTML content defined above
   };
 
   await transporter.sendMail(mailOptions);
 }
+
 
 // Start the server
 const PORT = 8000;
