@@ -99,20 +99,47 @@ async function sendEmail(registerData) {
 
   // Define the HTML content of the email
   const htmlContent = `
-    <html>
-      <head>
-        <style>
-          /* Add any CSS styling you want for your email here */
-        </style>
-      </head>
-      <body>
-        <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
-        <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
-        
-        <!-- Check if there is a livestream URL and include it in the email -->
-        ${registerData.livestreamurl ? `<p>Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>` : ''}
-      </body>
-    </html>
+    <html><head><style>
+      body {
+        background-color: black;
+        color: lime;
+        font-family: "Courier New", monospace;
+        font-size: 16px;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      p {
+        margin: 10px 0;
+      }
+
+      a {
+        color: #00ff00;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .terminal-text::before {
+        content: "$ ";
+        color: #00ff00;
+      }
+
+      .terminal-text {
+        display: block;
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="terminal-text">Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
+    <p class="terminal-text">This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
+
+    <!-- Check if there is a livestream URL and include it in the email -->
+    ${registerData.livestreamurl ? `<p class="terminal-text">Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>` : ''}
+  </body> </html>
   `;
 
   const mailOptions = {
