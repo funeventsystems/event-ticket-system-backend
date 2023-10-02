@@ -92,7 +92,7 @@ async function generatePDF(registerData) {
   });
     return pdfBufferPromise;
 }
-
+async function sendEmail(registerData, pdfBuffer) {
   const transporter = nodemailer.createTransport({
     service: 'your-email-service-provider',
     auth: {
