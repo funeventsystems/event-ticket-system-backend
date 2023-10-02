@@ -98,15 +98,15 @@ async function generatePDF(registerData) {
 
     // Contact information
     doc.fontSize(12).text('Contact Information:');
-    doc.fontSize(10).text('Email: contact@show.com', 50, 150);
-    doc.fontSize(10).text('Phone: +1 (123) 456-7890', 50, 170);
+    doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 150);
+    doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 170);
 
     // Instructions on how to use the ticket
     doc.fontSize(12).text('Instructions:');
-    doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show.', 50, 220);
+    doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS virtual show.', 50, 220);
     doc.fontSize(10).text('2. If you need to change the date or have any questions, please contact us.', 50, 240);
-    doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email.', 50, 260);
-    doc.fontSize(10).text('4. Keep this ticket safe and present it at the event entrance.', 50, 280);
+    doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email, or by looking up your unique access code on the website.', 50, 260);
+    doc.fontSize(10).text('4. Keep this ticket safe, it is considered to be your receipt if you need to exchange shows.', 50, 280);
 
     doc.end();
   });
