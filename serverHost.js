@@ -55,7 +55,7 @@ app.post('/api/registershow', (req, res) => {
 
   // Check if the date matches a specific date to set the livestream URL
   if (newRegister.date === '1') {
-    newRegister.livestreamurl = 'https://example.com/livestream-url'; // Set the specific URL
+    newRegister.livestreamurl = 'https://youtube.com'; // Set the specific URL
   }
 
   // Add the new mission to the upcoming missions array
