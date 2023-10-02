@@ -9,7 +9,9 @@ const crypto = require('crypto'); // Import crypto for generating a random ID
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
-
+app.get('/', (req, res) => {
+  res.sendFile(path.join('index.html'));
+});
 app.get('/api/ticket/:ticketId', (req, res) => {
   const tickets = JSON.parse(fs.readFileSync('tickets.json'));
   const ticketId = req.params.ticketId;
