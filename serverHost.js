@@ -20,7 +20,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 app.get('/api/ticket/:ticketId', (req, res) => {
-  const tickets = JSON.parse(fs.readFileSync('tickets.json'));
+  // Read the JSON data from the 'tickets.json' file
+  const rawData = fs.readFileSync('tickets.json');
+  
+  // Parse the JSON data into an array
+  const tickets = JSON.parse(rawData);
+
   const ticketId = req.params.ticketId;
   const ticket = tickets.find((ticket) => ticket.id === ticketId);
 
@@ -34,6 +39,7 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 
   res.json(ticketProfile);
 });
+
 
 app.post('/api/registershow', (req, res) => {
   const newRegister = req.body;
