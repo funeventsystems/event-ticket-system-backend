@@ -119,7 +119,7 @@ async function sendEmail(registerData) {
     from: 'your-email@gmail.com', // Sender's email address
     to: registerData.email, // Receiver's email address from the registration data
     subject: 'Registration Confirmation',
-    text: `Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}. This can be used on the MASTERMINDS digital ticket page, online.mastermindsshow.com.`,
+    // text: `Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}. This can be used on the MASTERMINDS digital ticket page, online.mastermindsshow.com.`,
     html: htmlContent, // Use the HTML content defined above
   };
 
