@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket System</title>
+</head>
+<body>
+    <h1>Lookup Ticket</h1>
+    <form id="lookup-form">
+        <label for="ticketId">Ticket ID:</label>
+        <input type="text" id="ticketId" name="ticketId" required>
+        <button type="submit">Lookup</button>
+    </form>
+    <div id="ticket-result"></div>
+
+    <h1>Admin Setup</h1>
+    <form id="admin-setup-form">
+        <label for="date">Date:</label>
+        <input type="text" id="date" name="date" required>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+        <button type="submit">Setup Ticket</button>
+    </form>
+    <div id="admin-setup-result"></div>
+
+    <script>
+        const lookupForm = document.getElementById('lookup-form');
+        const ticketIdInput = document.getElementById('ticketId');
+        const ticketResult = document.getElementById('ticket-result');
+
+        const adminSetupForm = document.getElementById('admin-setup-form');
+        const dateInput = document.getElementById('date');
+        const emailInput = document.getElementById('email');
+        const adminSetupResult = document.getElementById('admin-setup-result');
+
+        lookupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ticketId = ticketIdInput.value;
+            const response = await fetch(`/api/ticket/${ticketId}`);
+            const data = await response.json();
+            if (response.ok) {
+                ticketResult.innerHTML = `<p>Ticket ID: ${data.id}</p><p>Date: ${data.date}</p><p>Email: ${data.email}</p><p>Livestream URL: ${data.livestreamurl}</p>`;
+            } else {
+                ticketResult.innerHTML = `<p>${data.error}</p>`;
+            }
+        });
+
+        adminSetupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const date = dateInput.value;
+            const email = emailInput.value;
+            const response = await fetch('/api/registershow', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date, email }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                adminSetupResult.innerHTML = `<p>${data.message}</p>`;
+            } else {
+                adminSetupResult.innerHTML = `<p>${data.error}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
