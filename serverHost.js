@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const BWIP = require('bwip-js');
 const PDFDocument = require('pdfkit'); // Import PDFKit for PDF generation
+const JsBarcode = require('jsbarcode'); // Import the jsbarcode library
 
 const app = express();
 app.use(cookieParser());
@@ -136,21 +137,17 @@ async function generatePDF(registerData) {
     doc.fontSize(12).text(`Access ID: ${registerData.id}`);
     doc.fontSize(12).text(`Selected Date: ${registerData.date}`);
 
-const barcodeOptions = {
-  bcid: 'code128', // Barcode type (Code 128 in this example)
-  text: registerData.id, // Ticket ID as text
-  scale: 3, // Barcode scale factor
-  height: 30, // Barcode height
-  includetext: true, // Include the ticket ID as text below the barcode
-};
+const canvas = document.createElement('canvas');
+JsBarcode(canvas, registerData.id, {
+  format: 'CODE128', // Barcode type (Code 128 in this example)
+  displayValue: true, // Include the ticket ID as text below the barcode
+});
 
-// Generate the barcode as a Buffer using bwip-js
-BWIP.toBuffer(barcodeOptions, function (err, barcodeBuffer) {
-  if (err) {
-    return reject(err);
-  }
-  // Add the barcode image to the PDF
-  doc.image(barcodeBuffer, 200, 120);
+// Convert the canvas to a data URL
+const barcodeDataURL = canvas.toDataURL();
+
+// Add the barcode image to the PDF
+doc.image(barcodeDataURL, 200, 120);
 
   // Contact information
   doc.fontSize(12).text('Contact Information:');
