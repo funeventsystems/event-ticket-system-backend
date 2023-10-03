@@ -31,7 +31,7 @@ app.get('/admins', (req, res) => {
   res.sendFile(path.join(staticDir, 'admin.html'));
 });
 
-app.get('/api/tickets-pdf', (req, res) => {
+app.get('/api/tickets-html', (req, res) => {
   const rawData = fs.readFileSync('tickets.json');
   const tickets = JSON.parse(rawData);
 
@@ -43,47 +43,29 @@ app.get('/api/tickets-pdf', (req, res) => {
     return a.show.localeCompare(b.show);
   });
 
-  // Create a PDF document
-  const doc = new PDFDocument();
-  let pdfBuffers = []; // Store PDF chunks
   let currentShow = '';
+  let htmlContent = '<html><head><style>';
+  htmlContent += '/* Add your CSS styling here */';
+  htmlContent += '</style></head><body>';
 
-  // Create a writable stream to capture the PDF data
-  const stream = doc.pipe(new stream.Writable({
-    write(chunk, encoding, callback) {
-      pdfBuffers.push(chunk);
-      callback();
-    }
-  }));
-
-  doc.fontSize(20).text('Ticket List by Show', { align: 'center' });
+  htmlContent += '<h1>Ticket List by Show</h1>';
 
   for (const ticket of tickets) {
     if (ticket.show !== currentShow) {
       if (currentShow !== '') {
-        doc.moveDown();
+        htmlContent += '<br>';
       }
-      doc.fontSize(16).text(`Show: ${ticket.show}`, { align: 'center' });
-      doc.moveDown();
+      htmlContent += `<h2>Show: ${ticket.show}</h2>`;
       currentShow = ticket.show;
     }
-    doc.text(`Email: ${ticket.email}, Access ID: ${ticket.id}`);
-
-    // Add colored lines between items
-    doc.strokeColor('#000').lineWidth(1).moveTo(50, doc.y + 10).lineTo(550, doc.y + 10).stroke();
-    doc.moveDown();
+    htmlContent += `<p>Email: ${ticket.email}, Access ID: ${ticket.id}</p>`;
   }
 
-  doc.end();
+  htmlContent += '</body></html>';
 
-  stream.on('finish', () => {
-    // Send the PDF as a response
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename=TicketList.pdf');
-    res.send(Buffer.concat(pdfBuffers));
-  });
+  res.setHeader('Content-Type', 'text/html');
+  res.send(htmlContent);
 });
-
 
 app.get('/api/ticket/:ticketId', (req, res) => {
   // Read the JSON data from the 'tickets.json' file
