@@ -44,10 +44,16 @@ app.get('/api/tickets-pdf', (req, res) => {
 
   // Create a PDF document
   const doc = new PDFDocument();
-  const pdfBuffers = []; // Store PDF buffers
+  let pdfBuffers = []; // Store PDF chunks
   let currentShow = '';
 
-  doc.pipe(pdfBuffers); // Pipe the PDF to the buffer
+  // Create a writable stream to capture the PDF data
+  const stream = doc.pipe(new stream.Writable({
+    write(chunk, encoding, callback) {
+      pdfBuffers.push(chunk);
+      callback();
+    }
+  }));
 
   doc.fontSize(20).text('Ticket List by Show', { align: 'center' });
 
@@ -69,9 +75,12 @@ app.get('/api/tickets-pdf', (req, res) => {
 
   doc.end();
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'inline; filename=TicketList.pdf');
-  res.send(Buffer.concat(pdfBuffers)); // Send the PDF as a response
+  stream.on('finish', () => {
+    // Send the PDF as a response
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename=TicketList.pdf');
+    res.send(Buffer.concat(pdfBuffers));
+  });
 });
 
 
