@@ -136,16 +136,16 @@ async function generatePDF(registerData) {
     doc.fontSize(12).text(`Access ID: ${registerData.id}`);
     doc.fontSize(12).text(`Selected Date: ${registerData.date}`);
 
-    // Generate barcode with ticket ID
-    const barcodeOptions = {
-      bcid: 'code128', // Barcode type (Code 128 in this example)
-      text: registerData.id, // Ticket ID as text
-      scale: 3, // Barcode scale factor
-      height: 30, // Barcode height
-      includetext: true, // Include the ticket ID as text below the barcode
-    };
+const barcodeOptions = {
+  bcid: 'code128', // Barcode type (Code 128 in this example)
+  text: registerData.id, // Ticket ID as text
+  scale: 3, // Barcode scale factor
+  height: 30, // Barcode height
+  includetext: true, // Include the ticket ID as text below the barcode
+};
 
-   BWIP.toBuffer(barcodeOptions, function (err, barcodeBuffer) {
+// Generate the barcode as a Buffer using bwip-js
+BWIP.toBuffer(barcodeOptions, function (err, barcodeBuffer) {
   if (err) {
     return reject(err);
   }
@@ -167,10 +167,7 @@ async function generatePDF(registerData) {
   doc.end();
 });
 
-
-
-
-  return pdfBufferPromise;
+return pdfBufferPromise;
 }
 
 async function sendEmail(registerData, pdfBuffer) {
