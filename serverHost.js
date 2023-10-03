@@ -144,8 +144,14 @@ async function generatePDF(registerData) {
       height: 30, // Barcode height
       includetext: true, // Include the ticket ID as text below the barcode
     };
-    const barcodeDataUrl = BWIP.toDataURL(barcodeOptions);
-    doc.image(barcodeDataUrl, 200, 120);
+
+    // Generate the barcode as a Buffer using bwip-js
+    BWIP.toBuffer(barcodeOptions, function (err, barcodeBuffer) {
+      if (err) {
+        return reject(err);
+      }
+      // Add the barcode image to the PDF
+      doc.image(barcodeBuffer, 200, 120);
 
     // Contact information
     doc.fontSize(12).text('Contact Information:');
@@ -154,7 +160,7 @@ async function generatePDF(registerData) {
 
     // Instructions on how to use the ticket
     doc.fontSize(12).text('Instructions:');
-    doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS virtual show.', 50, 240);
+    doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, this can be either virtually or in person. You can change whichever method you wish to view the show (even up to the day of).', 50, 240);
     doc.fontSize(10).text('2. If you need to change the date or have any questions, please contact us.', 50, 260);
     doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email, or by looking up your unique access code on the website.', 50, 280);
     doc.fontSize(10).text('4. Keep this ticket safe; it is considered to be your receipt if you need to exchange shows.', 50, 300);
