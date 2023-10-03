@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const BWIP = require('bwip-js');
 const PDFDocument = require('pdfkit'); // Import PDFKit for PDF generation
 const JsBarcode = require('jsbarcode'); // Import the jsbarcode library
+const stream = require('stream');
 
 const app = express();
 app.use(cookieParser());
