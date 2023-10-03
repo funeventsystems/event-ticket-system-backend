@@ -48,7 +48,7 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 app.post('/api/registershow', async (req, res) => {
   const newRegister = req.body;
   const upcomingRegister = JSON.parse(fs.readFileSync('tickets.json'));
-  const uniqueId = generateUniqueId(15);
+  const uniqueId = generateUniqueId(6);
   newRegister.id = uniqueId;
 
   if (newRegister.date === '2024-5-15') {
