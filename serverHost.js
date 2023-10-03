@@ -140,24 +140,21 @@ async function generatePDF(registerData) {
     doc.fontSize(12).text(`Access ID: ${registerData.id}`);
     doc.fontSize(12).text(`Selected Date: ${registerData.date}`);
 
-const canvas = document.createElement('canvas');
-JsBarcode(canvas, registerData.id, {
-  format: 'CODE128',
-  displayValue: true,
-});
+const barcodeOptions = {
+  bcid: 'code128', // Barcode type (Code 128 in this example)
+  text: registerData.id, // Ticket ID as text
+  scale: 3, // Barcode scale factor
+  height: 30, // Barcode height
+  includetext: true, // Include the ticket ID as text below the barcode
+};
 
-// Convert the canvas to a data URL
-const barcodeDataURL = canvas.toDataURL();
-
-// Save the barcode image to a file
-const barcodeFilePath = 'barcode.png'; // Set the path to save the barcode image
-const barcodeStream = fs.createWriteStream(barcodeFilePath);
-const barcodeBuffer = Buffer.from(barcodeDataURL.split(',')[1], 'base64');
-barcodeStream.write(barcodeBuffer);
-barcodeStream.end();
-
-// Add the barcode image to the PDF
-doc.image(barcodeFilePath, 200, 120);
+// Generate the barcode as a Buffer using bwip-js
+BWIP.toBuffer(barcodeOptions, function (err, barcodeBuffer) {
+  if (err) {
+    return reject(err);
+  }
+  // Add the barcode image to the PDF
+  doc.image(barcodeBuffer, 200, 120);
 
   // Contact information
   doc.fontSize(12).text('Contact Information:');
