@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Verify Ticket</title>
+</head>
+<body>
+  <h1>Verify Ticket</h1>
+  <form id="verifyTicketForm">
+    <label for="ticketId">Enter Ticket ID:</label>
+    <input type="text" id="ticketId" name="ticketId" required>
+    <button type="submit">Verify Ticket</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('verifyTicketForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const ticketId = document.getElementById('ticketId').value;
+      const response = await fetch(`/api/verifyticket/${ticketId}`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        resultDiv.innerHTML = `<p>${data.message}</p>`;
+      } else {
+        resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
