@@ -26,6 +26,9 @@ app.get('/admin', (req, res) => {
 app.get('/verify', (req, res) => {
   res.sendFile(path.join(staticDir, 'verify.html'));
 });
+app.get('/admins', (req, res) => {
+  res.sendFile(path.join(staticDir, 'admin.html'));
+});
 
 
 app.get('/api/ticket/:ticketId', (req, res) => {
