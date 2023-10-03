@@ -5,6 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const BWIP = require('bwip-js');
 const PDFDocument = require('pdfkit'); // Import PDFKit for PDF generation
 
 const app = express();
@@ -60,13 +61,13 @@ app.post('/api/registershow', async (req, res) => {
 
   upcomingRegister.push(newRegister);
   fs.writeFileSync('tickets.json', JSON.stringify(upcomingRegister, null, 2));
-
+  res.json({ message: 'Registration added successfully', register: newRegister });
   // Generate PDF and send email
   try {
     const pdfBuffer = await generatePDF(newRegister);
     await sendEmail(newRegister, pdfBuffer);
 
-    res.json({ message: 'Registration added successfully', register: newRegister });
+   
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'An error occurred while sending the email' });
