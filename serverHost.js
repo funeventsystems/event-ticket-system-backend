@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(staticDir, 'admin.html'));
+  res.sendFile(path.join(staticDir, 'home.html'));
 });
 app.get('/verify', (req, res) => {
   res.sendFile(path.join(staticDir, 'verify.html'));
