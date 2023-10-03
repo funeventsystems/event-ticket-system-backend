@@ -73,6 +73,39 @@ app.post('/api/registershow', async (req, res) => {
   }
 });
 
+app.post('/api/verifyticket/:ticketId', (req, res) => {
+  const ticketId = req.params.ticketId;
+
+  // Read the JSON data from the 'tickets.json' file
+  const rawData = fs.readFileSync('tickets.json');
+  
+  // Parse the JSON data into an array
+  const tickets = JSON.parse(rawData);
+
+  // Find the ticket with the given ID
+  const ticketIndex = tickets.findIndex((ticket) => ticket.id === ticketId);
+
+  if (ticketIndex === -1) {
+    console.log('Ticket not found');
+    return res.status(404).json({ error: 'Ticket not found' });
+  }
+
+  // Check if the ticket has already been used
+  if (tickets[ticketIndex].used) {
+    console.log('Ticket already used');
+    return res.status(400).json({ error: 'Ticket already used' });
+  }
+
+  // Mark the ticket as used permanently by setting the 'used' property to 'true'
+  tickets[ticketIndex].used = true;
+
+  // Save the updated ticket data back to 'tickets.json'
+  fs.writeFileSync('tickets.json', JSON.stringify(tickets, null, 2));
+
+  res.json({ message: 'Ticket verified and marked as used successfully' });
+});
+
+
 // Function to generate a unique ID
 function generateUniqueId(length) {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
