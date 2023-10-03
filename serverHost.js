@@ -22,6 +22,9 @@ app.get('/', (req, res) => {
 app.get('/home', (req, res) => {
   res.sendFile(path.join(staticDir, 'home.html'));
 });
+app.get('/verify', (req, res) => {
+  res.sendFile(path.join(staticDir, 'verify.html'));
+});
 
 
 app.get('/api/ticket/:ticketId', (req, res) => {
