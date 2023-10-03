@@ -30,8 +30,7 @@ app.get('/admins', (req, res) => {
   res.sendFile(path.join(staticDir, 'admin.html'));
 });
 
-app.get('/api/email-tickets/:email', async (req, res) => {
-  const requestEmail = req.params.email;
+app.get('/api/tickets-pdf', (req, res) => {
   const rawData = fs.readFileSync('tickets.json');
   const tickets = JSON.parse(rawData);
 
@@ -48,6 +47,8 @@ app.get('/api/email-tickets/:email', async (req, res) => {
   const pdfBuffers = []; // Store PDF buffers
   let currentShow = '';
 
+  doc.pipe(pdfBuffers); // Pipe the PDF to the buffer
+
   doc.fontSize(20).text('Ticket List by Show', { align: 'center' });
 
   for (const ticket of tickets) {
@@ -60,55 +61,19 @@ app.get('/api/email-tickets/:email', async (req, res) => {
       currentShow = ticket.show;
     }
     doc.text(`Email: ${ticket.email}, Access ID: ${ticket.id}`);
+
+    // Add colored lines between items
+    doc.strokeColor('#000').lineWidth(1).moveTo(50, doc.y + 10).lineTo(550, doc.y + 10).stroke();
+    doc.moveDown();
   }
-
-  doc.on('data', (chunk) => {
-    pdfBuffers.push(chunk); // Capture PDF data
-  });
-
-  doc.on('end', () => {
-    const pdfBuffer = Buffer.concat(pdfBuffers); // Concatenate PDF data buffers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename=TicketList.pdf');
-    res.send(pdfBuffer); // Send the PDF as a response
-  });
 
   doc.end();
 
-  // Send the PDF via email
-  try {
-    const pdfBuffer = Buffer.concat(pdfBuffers); // Concatenate PDF data buffers
-    await sendEmail(requestEmail, pdfBuffer);
-    res.json({ message: 'Email sent successfully' });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred while sending the email' });
-  }
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename=TicketList.pdf');
+  res.send(Buffer.concat(pdfBuffers)); // Send the PDF as a response
 });
-async function sendEmail(toEmail, pdfBuffer) {
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: secrets.email, // Use email from secrets.json
-      pass: secrets.password, // Use password from secrets.json
-    },
-  });
 
-  const mailOptions = {
-    from: 'your-email@gmail.com',
-    to: toEmail,
-    subject: 'Ticket List PDF',
-    text: 'Here is the PDF containing the ticket list sorted by show.',
-    attachments: [
-      {
-        filename: 'TicketList.pdf',
-        content: pdfBuffer,
-      },
-    ],
-  };
-
-  await transporter.sendMail(mailOptions);
-}
 
 app.get('/api/ticket/:ticketId', (req, res) => {
   // Read the JSON data from the 'tickets.json' file
