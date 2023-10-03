@@ -29,13 +29,12 @@
     </form>
     <div id="admin-setup-result"></div>
 
-    <script>
+   <script>
         const lookupForm = document.getElementById('lookup-form');
         const ticketIdInput = document.getElementById('ticketId');
         const ticketResult = document.getElementById('ticket-result');
 
         const adminSetupForm = document.getElementById('admin-setup-form');
-        const dateInput = document.getElementById('date');
         const emailInput = document.getElementById('email');
         const adminSetupResult = document.getElementById('admin-setup-result');
 
@@ -53,7 +52,8 @@
 
         adminSetupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const date = dateInput.value;
+            const selectedDate = document.querySelector('input[name="date"]:checked');
+            const date = selectedDate ? selectedDate.value : '';
             const email = emailInput.value;
             const response = await fetch('/api/registershow', {
                 method: 'POST',
