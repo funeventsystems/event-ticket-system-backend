@@ -9,6 +9,7 @@ const BWIP = require('bwip-js');
 const PDFDocument = require('pdfkit'); // Import PDFKit for PDF generation
 const JsBarcode = require('jsbarcode'); // Import the jsbarcode library
 const stream = require('stream');
+const axios = require('axios');
 
 const app = express();
 app.use(cookieParser());
@@ -162,7 +163,7 @@ function generateUniqueId(length) {
 }
 async function generatePDF(registerData) {
   const doc = new PDFDocument();
-  const pdfBufferPromise = new Promise((resolve, reject) => {
+  const pdfBufferPromise = new Promise(async (resolve, reject) => {
     const pdfBuffer = [];
     doc.on('data', (chunk) => pdfBuffer.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
@@ -176,6 +177,17 @@ async function generatePDF(registerData) {
     doc.fontSize(12).text(`Access ID: ${registerData.id}`);
     doc.fontSize(12).text(`Selected Date: ${registerData.date}`);
 
+    // Generate barcode using the barcode API
+    const barcodeData = registerData.id;
+    const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
+    
+    try {
+      const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
+      const barcodeImage = response.data;
+      
+      // Add the barcode image to the PDF
+      doc.image(barcodeImage, 200, 100, { width: 150 });
+      
 
 
   // Contact information
