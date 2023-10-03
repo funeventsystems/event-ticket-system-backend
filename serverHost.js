@@ -30,6 +30,77 @@ app.get('/admins', (req, res) => {
   res.sendFile(path.join(staticDir, 'admin.html'));
 });
 
+app.get('/api/email-tickets/:email', async (req, res) => {
+  const requestEmail = req.params.email;
+  const rawData = fs.readFileSync('tickets.json');
+  const tickets = JSON.parse(rawData);
+
+  // Filter tickets by show
+  const shows = {};
+  for (const ticket of tickets) {
+    if (!shows[ticket.show]) {
+      shows[ticket.show] = [];
+    }
+    shows[ticket.show].push({ email: ticket.email, id: ticket.id });
+  }
+
+  // Sort emails alphabetically
+  for (const show in shows) {
+    shows[show].sort((a, b) => a.email.localeCompare(b.email));
+  }
+
+  // Create a PDF document
+  const doc = new PDFDocument();
+  doc.pipe(res); // Pipe the PDF to the response
+
+  doc.fontSize(20).text('Ticket List by Show', { align: 'center' });
+
+  for (const show in shows) {
+    doc.moveDown();
+    doc.fontSize(16).text(`Show: ${show}`, { align: 'center' });
+    doc.moveDown();
+    for (const ticket of shows[show]) {
+      doc.text(`Email: ${ticket.email}, Access ID: ${ticket.id}`);
+    }
+  }
+
+  doc.end();
+
+  // Send the PDF via email
+  try {
+    const pdfBuffer = doc.buffer();
+    await sendEmail(requestEmail, pdfBuffer);
+    res.json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'An error occurred while sending the email' });
+  }
+});
+
+async function sendEmail(toEmail, pdfBuffer) {
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: secrets.email, // Use email from secrets.json
+      pass: secrets.password, // Use password from secrets.json
+    },
+  });
+
+  const mailOptions = {
+    from: 'your-email@gmail.com',
+    to: toEmail,
+    subject: 'Ticket List PDF',
+    text: 'Here is the PDF containing the ticket list sorted by show.',
+    attachments: [
+      {
+        filename: 'TicketList.pdf',
+        content: pdfBuffer,
+      },
+    ],
+  };
+
+  await transporter.sendMail(mailOptions);
+}
 
 app.get('/api/ticket/:ticketId', (req, res) => {
   // Read the JSON data from the 'tickets.json' file
