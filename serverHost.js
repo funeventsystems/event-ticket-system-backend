@@ -202,10 +202,14 @@ async function generatePDF(registerData) {
   doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email, or by looking up your unique access code on the website.', 50, 280);
   doc.fontSize(10).text('4. Keep this ticket safe; it is considered to be your receipt if you need to exchange shows.', 50, 300);
 
-  doc.end();
-});
+   doc.end();
+    } catch (error) {
+      console.error('Error:', error);
+      reject(error); // Reject the promise if an error occurs
+    }
+  });
 
-return pdfBufferPromise;
+  return pdfBufferPromise;
 }
 
 async function sendEmail(registerData, pdfBuffer) {
