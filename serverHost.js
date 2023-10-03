@@ -35,33 +35,31 @@ app.get('/api/email-tickets/:email', async (req, res) => {
   const rawData = fs.readFileSync('tickets.json');
   const tickets = JSON.parse(rawData);
 
-  // Filter tickets by show
-  const shows = {};
-  for (const ticket of tickets) {
-    if (!shows[ticket.show]) {
-      shows[ticket.show] = [];
+  // Sort tickets by date and show
+  tickets.sort((a, b) => {
+    if (a.show === b.show) {
+      return a.date.localeCompare(b.date);
     }
-    shows[ticket.show].push({ email: ticket.email, id: ticket.id });
-  }
-
-  // Sort emails alphabetically
-  for (const show in shows) {
-    shows[show].sort((a, b) => a.email.localeCompare(b.email));
-  }
+    return a.show.localeCompare(b.show);
+  });
 
   // Create a PDF document
   const doc = new PDFDocument();
   const pdfBuffers = []; // Store PDF buffers
+  let currentShow = '';
 
   doc.fontSize(20).text('Ticket List by Show', { align: 'center' });
 
-  for (const show in shows) {
-    doc.moveDown();
-    doc.fontSize(16).text(`Show: ${show}`, { align: 'center' });
-    doc.moveDown();
-    for (const ticket of shows[show]) {
-      doc.text(`Email: ${ticket.email}, Access ID: ${ticket.id}`);
+  for (const ticket of tickets) {
+    if (ticket.show !== currentShow) {
+      if (currentShow !== '') {
+        doc.moveDown();
+      }
+      doc.fontSize(16).text(`Show: ${ticket.show}`, { align: 'center' });
+      doc.moveDown();
+      currentShow = ticket.show;
     }
+    doc.text(`Email: ${ticket.email}, Access ID: ${ticket.id}`);
   }
 
   doc.on('data', (chunk) => {
@@ -81,12 +79,12 @@ app.get('/api/email-tickets/:email', async (req, res) => {
   try {
     const pdfBuffer = Buffer.concat(pdfBuffers); // Concatenate PDF data buffers
     await sendEmail(requestEmail, pdfBuffer);
+    res.json({ message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error:', error);
-    // Handle email sending error
+    res.status(500).json({ error: 'An error occurred while sending the email' });
   }
 });
-
 async function sendEmail(toEmail, pdfBuffer) {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
