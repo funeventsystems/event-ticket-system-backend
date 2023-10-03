@@ -51,7 +51,7 @@ app.get('/api/email-tickets/:email', async (req, res) => {
 
   // Create a PDF document
   const doc = new PDFDocument();
-  doc.pipe(res); // Pipe the PDF to the response
+  const pdfBuffers = []; // Store PDF buffers
 
   doc.fontSize(20).text('Ticket List by Show', { align: 'center' });
 
@@ -64,16 +64,26 @@ app.get('/api/email-tickets/:email', async (req, res) => {
     }
   }
 
+  doc.on('data', (chunk) => {
+    pdfBuffers.push(chunk); // Capture PDF data
+  });
+
+  doc.on('end', () => {
+    const pdfBuffer = Buffer.concat(pdfBuffers); // Concatenate PDF data buffers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename=TicketList.pdf');
+    res.send(pdfBuffer); // Send the PDF as a response
+  });
+
   doc.end();
 
   // Send the PDF via email
   try {
-    const pdfBuffer = doc.buffer();
+    const pdfBuffer = Buffer.concat(pdfBuffers); // Concatenate PDF data buffers
     await sendEmail(requestEmail, pdfBuffer);
-    res.json({ message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred while sending the email' });
+    // Handle email sending error
   }
 });
 
