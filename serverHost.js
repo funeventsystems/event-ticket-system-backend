@@ -19,8 +19,8 @@ app.use(express.static(staticDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
-app.get('/home', (req, res) => {
-  res.sendFile(path.join(staticDir, 'home.html'));
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(staticDir, 'admin.html'));
 });
 app.get('/verify', (req, res) => {
   res.sendFile(path.join(staticDir, 'verify.html'));
