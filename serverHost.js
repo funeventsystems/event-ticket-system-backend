@@ -139,15 +139,22 @@ async function generatePDF(registerData) {
 
 const canvas = document.createElement('canvas');
 JsBarcode(canvas, registerData.id, {
-  format: 'CODE128', // Barcode type (Code 128 in this example)
-  displayValue: true, // Include the ticket ID as text below the barcode
+  format: 'CODE128',
+  displayValue: true,
 });
 
 // Convert the canvas to a data URL
 const barcodeDataURL = canvas.toDataURL();
 
+// Save the barcode image to a file
+const barcodeFilePath = 'barcode.png'; // Set the path to save the barcode image
+const barcodeStream = fs.createWriteStream(barcodeFilePath);
+const barcodeBuffer = Buffer.from(barcodeDataURL.split(',')[1], 'base64');
+barcodeStream.write(barcodeBuffer);
+barcodeStream.end();
+
 // Add the barcode image to the PDF
-doc.image(barcodeDataURL, 200, 120);
+doc.image(barcodeFilePath, 200, 120);
 
   // Contact information
   doc.fontSize(12).text('Contact Information:');
