@@ -132,17 +132,28 @@ async function generatePDF(registerData) {
     doc.fontSize(12).text(`Access ID: ${registerData.id}`);
     doc.fontSize(12).text(`Selected Date: ${registerData.date}`);
 
+    // Generate barcode with ticket ID
+    const barcodeOptions = {
+      bcid: 'code128', // Barcode type (Code 128 in this example)
+      text: registerData.id, // Ticket ID as text
+      scale: 3, // Barcode scale factor
+      height: 30, // Barcode height
+      includetext: true, // Include the ticket ID as text below the barcode
+    };
+    const barcodeDataUrl = BWIP.toDataURL(barcodeOptions);
+    doc.image(barcodeDataUrl, 200, 120);
+
     // Contact information
     doc.fontSize(12).text('Contact Information:');
-    doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 150);
-    doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 170);
+    doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
+    doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 190);
 
     // Instructions on how to use the ticket
     doc.fontSize(12).text('Instructions:');
-    doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS virtual show.', 50, 220);
-    doc.fontSize(10).text('2. If you need to change the date or have any questions, please contact us.', 50, 240);
-    doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email, or by looking up your unique access code on the website.', 50, 260);
-    doc.fontSize(10).text('4. Keep this ticket safe, it is considered to be your receipt if you need to exchange shows.', 50, 280);
+    doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS virtual show.', 50, 240);
+    doc.fontSize(10).text('2. If you need to change the date or have any questions, please contact us.', 50, 260);
+    doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email, or by looking up your unique access code on the website.', 50, 280);
+    doc.fontSize(10).text('4. Keep this ticket safe; it is considered to be your receipt if you need to exchange shows.', 50, 300);
 
     doc.end();
   });
