@@ -1,8 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const passbook = require('node-passbook');
-const Pass = passbook.Pass;
+
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const nodemailer = require('nodemailer');
@@ -230,7 +229,7 @@ async function sendEmail(registerData, pdfBuffer) {
       pass: secrets.password, // Use password from secrets.json
     },
   });
-const walletPassBuffer = await generateAppleWalletPass(registerData);
+
   const htmlContent = `
     <html>
       <head>
@@ -264,11 +263,7 @@ const walletPassBuffer = await generateAppleWalletPass(registerData);
         filename: 'DigitalID.pdf',
         content: pdfBuffer,
       },
-      {
-        filename: 'WalletPass.pkpass',
-        content: walletPassBuffer,
-        contentType: 'application/vnd.apple.pkpass', // Set the content type for Apple Wallet pass
-      },
+      
     ],
   };
 
@@ -278,27 +273,7 @@ const walletPassBuffer = await generateAppleWalletPass(registerData);
 
 // ...
 
-async function generateAppleWalletPass(registerData) {
-  const pass = new Pass({
-    model: 'coupon',
-    serialNumber: '123456',
-    description: 'Masterminds Show Pass',
-    organizationName: 'Masterminds Show',
-    passTypeIdentifier: 'your.pass.type.identifier',
-    teamIdentifier: 'your.team.identifier',
-    backgroundColor: 'rgb(255, 255, 255)',
-  });
 
-  pass.fields.add('eventDate', 'Event Date', registerData.date);
-  pass.fields.add('accessID', 'Access ID', registerData.id);
-
-  // Add more pass fields as needed
-
-  // Generate the pass
-  const passBuffer = await pass.generate();
-
-  return passBuffer;
-}
 
 // ...
 
