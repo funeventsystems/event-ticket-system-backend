@@ -192,8 +192,8 @@ async function generatePDF(registerData) {
 
       // Move barcode to top right with a border
       const barcodeWidth = 150;
-      const barcodeX = 700 - barcodeWidth; // Adjust this value for positioning
-      const barcodeY = 50; // Adjust this value for positioning
+      const barcodeX = 550 - barcodeWidth; // Adjust this value for positioning
+      const barcodeY = 100; // Adjust this value for positioning
       doc.image(barcodeImage, barcodeX, barcodeY, { width: barcodeWidth });
 
       // Contact information
