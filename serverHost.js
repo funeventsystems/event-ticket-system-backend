@@ -166,7 +166,7 @@ function generateUniqueId(length) {
 
 async function generatePDF(registerData) {
   const doc = new PDFDocument();
-  
+
   // Create a promise to handle PDF generation
   const pdfBufferPromise = new Promise(async (resolve, reject) => {
     const pdfBuffer = [];
@@ -185,12 +185,17 @@ async function generatePDF(registerData) {
     // Generate barcode using the barcode API
     const barcodeData = registerData.id;
     const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
-    
+
     try {
       const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
       const barcodeImage = response.data;
-      // Add the barcode image to the PDF
-      doc.image(barcodeImage, 200, 100, { width: 150 });
+
+      // Move barcode to top right with a border
+      const barcodeWidth = 150;
+      const barcodeX = 400 - barcodeWidth; // Adjust this value for positioning
+      const barcodeY = 50; // Adjust this value for positioning
+      doc.image(barcodeImage, barcodeX, barcodeY, { width: barcodeWidth });
+
       // Contact information
       doc.fontSize(12).text('Contact Information:');
       doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
@@ -213,6 +218,7 @@ async function generatePDF(registerData) {
 
   return pdfBufferPromise;
 }
+
 
 
 async function sendEmail(registerData, pdfBuffer) {
