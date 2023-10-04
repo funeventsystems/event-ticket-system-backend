@@ -161,15 +161,19 @@ function generateUniqueId(length) {
   }
   return id;
 }
+
+
 async function generatePDF(registerData) {
   const doc = new PDFDocument();
+  
+  // Create a promise to handle PDF generation
   const pdfBufferPromise = new Promise(async (resolve, reject) => {
     const pdfBuffer = [];
     doc.on('data', (chunk) => pdfBuffer.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
     doc.on('error', reject);
 
-    // Add an image for the show's logo
+    // Add the show's logo
     doc.image('mastermindsbook.jpg', 50, 50, { width: 100 });
 
     // Title and show information
@@ -187,22 +191,21 @@ async function generatePDF(registerData) {
       
       // Add the barcode image to the PDF
       doc.image(barcodeImage, 200, 100, { width: 150 });
-      
 
+      // Contact information
+      doc.fontSize(12).text('Contact Information:');
+      doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
+      doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 190);
 
-  // Contact information
-  doc.fontSize(12).text('Contact Information:');
-  doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
-  doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 190);
+      // Instructions on how to use the ticket
+      doc.fontSize(12).text('Instructions:');
+      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
+      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
+      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
+      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
 
-  // Instructions on how to use the ticket
-  doc.fontSize(12).text('Instructions:');
-  doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, this can be either virtually or in person. You can change whichever method you wish to view the show (even up to the day of).', 50, 240);
-  doc.fontSize(10).text('2. If you need to change the date or have any questions, please contact us.', 50, 260);
-  doc.fontSize(10).text('3. You can join the livestream (if available) using the link provided in the email, or by looking up your unique access code on the website.', 50, 280);
-  doc.fontSize(10).text('4. Keep this ticket safe; it is considered to be your receipt if you need to exchange shows.', 50, 300);
-
-   doc.end();
+      // End document creation
+      doc.end();
     } catch (error) {
       console.error('Error:', error);
       reject(error); // Reject the promise if an error occurs
@@ -211,6 +214,7 @@ async function generatePDF(registerData) {
 
   return pdfBufferPromise;
 }
+
 
 async function sendEmail(registerData, pdfBuffer) {
   const transporter = nodemailer.createTransport({
