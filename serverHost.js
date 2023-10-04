@@ -189,10 +189,16 @@ async function generatePDF(registerData) {
     try {
       const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
       const barcodeImage = response.data;
-      
+      doc.fontSize(10).text(‘’);
+      doc.fontSize(10).text(‘’);
+      doc.fontSize(10).text(‘’);
+      doc.fontSize(10).text(‘’);
       // Add the barcode image to the PDF
       doc.image(barcodeImage, 200, 100, { width: 150 });
-
+doc.fontSize(10).text(‘’);
+doc.fontSize(10).text(‘’);
+doc.fontSize(10).text(‘’);
+doc.fontSize(10).text(‘’);
       // Contact information
       doc.fontSize(12).text('Contact Information:');
       doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
