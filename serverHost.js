@@ -188,8 +188,8 @@ async function generatePDF(uniqueIds) {
     // Add instructions on how to use the ticket on each page
     function addInstructions() {
       doc.fontSize(12).text('Instructions:');
-      doc.fontSize(10).text('                     ', 50, 240);
-      doc.fontSize(10).text('                     ', 50, 260);
+      doc.fontSize(10).text('‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎   ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎                  ', 50, 240);
+      doc.fontSize(10).text('      ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎           ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎    ', 50, 260);
       doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
       doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
       doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
