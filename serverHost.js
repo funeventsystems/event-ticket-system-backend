@@ -214,13 +214,18 @@ async function generatePDF(uniqueIds) {
         const barcodeImage = response.data;
 
         doc.image(barcodeImage, x, y, { width: barcodeWidth });
+
+        // Adjust the X-coordinate to place text on the right half of the page
+        const textX = 300; // Adjust this value as needed
+        doc.text(`Access ID: ${barcodeData}`, textX, y + 20); // Adjust Y-coordinate and text as needed
+
         barcodeCount++;
 
         // Log the generated barcode and its position
         console.log(`Generated Barcode ${barcodeIndex + 1} of ${uniqueIds.length}: ${barcodeData}`);
 
         // Delay for a moment before adding the next barcode
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
       } catch (error) {
         console.error('Error:', error);
         reject(error); // Reject the promise if an error occurs
@@ -246,6 +251,7 @@ async function generatePDF(uniqueIds) {
 
   return pdfBufferPromise;
 }
+
 
 
 
