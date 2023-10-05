@@ -132,6 +132,7 @@ app.post('/api/registershow', async (req, res) => {
   }
 });
 
+
 async function generatePDF(uniqueIds) {
   const doc = new PDFDocument();
 
@@ -175,7 +176,7 @@ async function generatePDF(uniqueIds) {
     }
 
     // Function to add a barcode with a delay
-    async function addBarcodeWithDelay(barcodeData, x, y) {
+    async function addBarcodeWithDelay(barcodeData, x, y, barcodeIndex) {
       const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
 
       try {
@@ -196,6 +197,9 @@ async function generatePDF(uniqueIds) {
         doc.image(barcodeImage, x, y, { width: barcodeWidth });
         barcodeCount++;
 
+        // Log the generated barcode and its position
+        console.log(`Generated Barcode ${barcodeIndex + 1} of ${uniqueIds.length}: ${barcodeData}`);
+
         // Delay for a moment before adding the next barcode
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
       } catch (error) {
@@ -214,7 +218,7 @@ async function generatePDF(uniqueIds) {
       const x = 50;
       const y = 200 + (barcodeCount * (barcodeSpacing + barcodeWidth));
 
-      await addBarcodeWithDelay(barcodeData, x, y);
+      await addBarcodeWithDelay(barcodeData, x, y, i);
     }
 
     // End document creation
@@ -223,7 +227,6 @@ async function generatePDF(uniqueIds) {
 
   return pdfBufferPromise;
 }
-
 
 
 
