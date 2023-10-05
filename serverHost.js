@@ -143,7 +143,7 @@ async function generatePDF(uniqueIds) {
     doc.on('error', reject);
 
     let currentPage = 1;
-    const maxBarcodesPerPage = 4;
+    const maxBarcodesPerPage = 12;
     const barcodeSpacing = 20;
     const barcodeWidth = 150;
     let barcodeCount = 0;
@@ -174,18 +174,18 @@ async function generatePDF(uniqueIds) {
       doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
     }
 
-    for (let i = 0; i < uniqueIds.length; i++) {
-      if (barcodeCount >= maxBarcodesPerPage) {
-        addNewPage();
-        addLogo();
-        addTitleAndInfo();
-        addInstructions();
-      }
-
-      const barcodeData = uniqueIds[i];
+    // Function to add a barcode with a delay
+    async function addBarcodeWithDelay(barcodeData, x, y) {
       const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
 
       try {
+        if (barcodeCount >= maxBarcodesPerPage) {
+          addNewPage();
+          addLogo();
+          addTitleAndInfo();
+          addInstructions();
+        }
+
         if (barcodeCount > 0) {
           doc.translate(0, barcodeSpacing);
         }
@@ -193,16 +193,28 @@ async function generatePDF(uniqueIds) {
         const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
         const barcodeImage = response.data;
 
-        // Calculate position for each barcode
-        const barcodeX = 50;
-        const barcodeY = 200;
-
-        doc.image(barcodeImage, barcodeX, barcodeY, { width: barcodeWidth });
+        doc.image(barcodeImage, x, y, { width: barcodeWidth });
         barcodeCount++;
+
+        // Delay for a moment before adding the next barcode
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
       } catch (error) {
         console.error('Error:', error);
         reject(error); // Reject the promise if an error occurs
       }
+    }
+
+    // Initial setup for the first page
+    addLogo();
+    addTitleAndInfo();
+    addInstructions();
+
+    for (let i = 0; i < uniqueIds.length; i++) {
+      const barcodeData = uniqueIds[i];
+      const x = 50;
+      const y = 200 + (barcodeCount * (barcodeSpacing + barcodeWidth));
+
+      await addBarcodeWithDelay(barcodeData, x, y);
     }
 
     // End document creation
@@ -211,6 +223,7 @@ async function generatePDF(uniqueIds) {
 
   return pdfBufferPromise;
 }
+
 
 
 
