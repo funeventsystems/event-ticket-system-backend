@@ -30,21 +30,23 @@
     <div id="ticket-result"></div>
 
     <h1>Admin Setup</h1>
-    <form id="admin-setup-form">
-        <label for="date">Select Date:</label><br>
-        <input type="radio" id="date1" name="date" value="2024-5-15" required>
-        <label for="date1">May 15th</label><br>
-        <input type="radio" id="date2" name="date" value="2024-5-16" required>
-        <label for="date2">May 16th</label><br>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required>
-        
-        <!-- Add the input field for ticket amount -->
-        <label for="amount">Ticket Amount:</label>
-        <input type="number" id="amount" name="amount" min="1" required>
-        
-        <button type="submit">Setup Ticket</button>
-    </form>
+<!-- Admin Setup Form -->
+<form id="admin-setup-form">
+    <label for="date">Select Date:</label><br>
+    <input type="radio" id="date1" name="date" value="2024-5-15" required>
+    <label for="date1">May 15th</label><br>
+    <input type="radio" id="date2" name="date" value="2024-5-16" required>
+    <label for="date2">May 16th</label><br>
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" required>
+    
+    <!-- Use type="number" for the amount input -->
+    <label for="amount">Ticket Amount:</label>
+    <input type="number" id="amount" name="amount" min="1" required>
+    
+    <button type="submit">Setup Ticket</button>
+</form>
+
     <div id="admin-setup-result"></div>
 
     <!-- Green success screen -->
