@@ -125,7 +125,7 @@ app.post('/api/registershow', async (req, res) => {
   // Generate a single PDF containing all the barcodes
   try {
     const pdfBuffer = await generatePDF(uniqueIds);
-    await sendEmail(registerData, pdfBuffer);
+    await sendEmail(registerData, pdfBuffer, uniqueIds);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'An error occurred while sending the email' });
@@ -275,7 +275,7 @@ function generateUniqueId(length) {
 
 
 
-async function sendEmail(registerData, pdfBuffer) {
+async function sendEmail(registerData, pdfBuffer, uniqueIds) {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -283,6 +283,9 @@ async function sendEmail(registerData, pdfBuffer) {
       pass: secrets.password, // Use password from secrets.json
     },
   });
+
+  // Use the unique access ID from the argument
+  const uniqueId = uniqueIds[0]; // Assuming you want the first ID
 
   const htmlContent = `
     <html>
@@ -292,9 +295,9 @@ async function sendEmail(registerData, pdfBuffer) {
         </style>
       </head>
       <body>
-        <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${registerData.id}.</p>
+        <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${uniqueId}.</p>
         <p>Your selected date is: ${registerData.date}</p>
-        <p> The livestream starts a 7:00, with the waiting room opening at 6:30 PM</p>
+        <p> The livestream starts at 7:00 PM, with the waiting room opening at 6:30 PM</p>
         <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
         <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
         <a href="mailto:contact@show.com">Contact@show.com</a>
@@ -317,7 +320,6 @@ async function sendEmail(registerData, pdfBuffer) {
         filename: 'DigitalID.pdf',
         content: pdfBuffer,
       },
-      
     ],
   };
 
