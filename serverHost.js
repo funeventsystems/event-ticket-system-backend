@@ -142,28 +142,15 @@ async function generatePDF(uniqueIds) {
     doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
     doc.on('error', reject);
 
-    // Add the show's logo
+    // Add the logo in the top left corner
     doc.image('logo.png', 50, 50, { width: 100 });
 
     // Title and show information
     doc.fontSize(20).text('MASTERMINDS Show Tickets', 200, 50);
-     // Contact information
-      doc.fontSize(12).text('Contact Information:');
-      doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
-      doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 190);
-
-      // Instructions on how to use the ticket
-      doc.fontSize(12).text('Instructions:');
-      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
-      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
-      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
-      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
-
 
     // Generate and add barcodes for each unique ID
-    const barcodeX = 50;
-    const barcodeY = 100;
     const barcodeSpacing = 20;
+    const barcodeWidth = 150;
 
     for (let i = 0; i < uniqueIds.length; i++) {
       const barcodeData = uniqueIds[i];
@@ -173,11 +160,11 @@ async function generatePDF(uniqueIds) {
         const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
         const barcodeImage = response.data;
 
-        // Move barcode to top right with a border
-        const barcodeWidth = 150;
-        const barcodeXPosition = barcodeX + (i * (barcodeWidth + barcodeSpacing));
+        // Calculate position for each barcode on a new row
+        const barcodeX = 50;
+        const barcodeY = 200 + i * (barcodeWidth + barcodeSpacing);
 
-        doc.image(barcodeImage, barcodeXPosition, barcodeY, { width: barcodeWidth });
+        doc.image(barcodeImage, barcodeX, barcodeY, { width: barcodeWidth });
       } catch (error) {
         console.error('Error:', error);
         reject(error); // Reject the promise if an error occurs
