@@ -92,32 +92,105 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 
 
 app.post('/api/registershow', async (req, res) => {
-  const newRegister = req.body;
+  const { amount, ...registerData } = req.body; // Extract 'amount' from the request body
+
+  // Validate 'amount' to ensure it's a positive integer
+  if (!Number.isInteger(amount) || amount <= 0) {
+    return res.status(400).json({ error: 'Invalid ticket amount' });
+  }
+
   const upcomingRegister = JSON.parse(fs.readFileSync('tickets.json'));
-  const uniqueId = generateUniqueId(6);
-  newRegister.id = uniqueId;
+  const uniqueIds = [];
 
-  if (newRegister.date === '2024-5-15') {
-    newRegister.livestreamurl = 'https://youtube.com';
-  }
-  if (newRegister.date === '2024-5-16') {
-    newRegister.livestreamurl = 'show2.url';
+  // Generate the specified number of tickets and unique IDs
+  for (let i = 0; i < amount; i++) {
+    const uniqueId = generateUniqueId(6);
+    uniqueIds.push(uniqueId);
+
+    const newRegister = { ...registerData, id: uniqueId };
+
+    if (newRegister.date === '2024-5-15') {
+      newRegister.livestreamurl = 'https://youtube.com';
+    }
+    if (newRegister.date === '2024-5-16') {
+      newRegister.livestreamurl = 'show2.url';
+    }
+
+    upcomingRegister.push(newRegister);
   }
 
-  upcomingRegister.push(newRegister);
   fs.writeFileSync('tickets.json', JSON.stringify(upcomingRegister, null, 2));
-  res.json({ message: 'Registration added successfully', register: newRegister });
-  // Generate PDF and send email
-  try {
-    const pdfBuffer = await generatePDF(newRegister);
-    await sendEmail(newRegister, pdfBuffer);
+  res.json({ message: 'Registrations added successfully', uniqueIds });
 
-   
+  // Generate a single PDF containing all the barcodes
+  try {
+    const pdfBuffer = await generatePDF(uniqueIds);
+    await sendEmail(registerData, pdfBuffer);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'An error occurred while sending the email' });
   }
 });
+
+async function generatePDF(uniqueIds) {
+  const doc = new PDFDocument();
+
+  // Create a promise to handle PDF generation
+  const pdfBufferPromise = new Promise(async (resolve, reject) => {
+    const pdfBuffer = [];
+    doc.on('data', (chunk) => pdfBuffer.push(chunk));
+    doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
+    doc.on('error', reject);
+
+    // Add the show's logo
+    doc.image('logo.png', 50, 50, { width: 100 });
+
+    // Title and show information
+    doc.fontSize(20).text('MASTERMINDS Show Tickets', 200, 50);
+     // Contact information
+      doc.fontSize(12).text('Contact Information:');
+      doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
+      doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 190);
+
+      // Instructions on how to use the ticket
+      doc.fontSize(12).text('Instructions:');
+      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
+      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
+      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
+      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
+
+
+    // Generate and add barcodes for each unique ID
+    const barcodeX = 50;
+    const barcodeY = 100;
+    const barcodeSpacing = 20;
+
+    for (let i = 0; i < uniqueIds.length; i++) {
+      const barcodeData = uniqueIds[i];
+      const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
+
+      try {
+        const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
+        const barcodeImage = response.data;
+
+        // Move barcode to top right with a border
+        const barcodeWidth = 150;
+        const barcodeXPosition = barcodeX + (i * (barcodeWidth + barcodeSpacing));
+
+        doc.image(barcodeImage, barcodeXPosition, barcodeY, { width: barcodeWidth });
+      } catch (error) {
+        console.error('Error:', error);
+        reject(error); // Reject the promise if an error occurs
+      }
+    }
+
+    // End document creation
+    doc.end();
+  });
+
+  return pdfBufferPromise;
+}
+
 
 app.post('/api/verifyticket/:ticketId', (req, res) => {
   const ticketId = req.params.ticketId;
@@ -164,60 +237,6 @@ function generateUniqueId(length) {
 }
 
 
-async function generatePDF(registerData) {
-  const doc = new PDFDocument();
-
-  // Create a promise to handle PDF generation
-  const pdfBufferPromise = new Promise(async (resolve, reject) => {
-    const pdfBuffer = [];
-    doc.on('data', (chunk) => pdfBuffer.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
-    doc.on('error', reject);
-
-    // Add the show's logo
-    doc.image('logo.png', 50, 50, { width: 100 });
-
-    // Title and show information
-    doc.fontSize(20).text('MASTERMINDS Show Ticket', 200, 50);
-    doc.fontSize(12).text(`Access ID: ${registerData.id}`);
-    doc.fontSize(12).text(`Selected Date: ${registerData.date}`);
-
-    // Generate barcode using the barcode API
-    const barcodeData = registerData.id;
-    const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
-
-    try {
-      const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
-      const barcodeImage = response.data;
-
-      // Move barcode to top right with a border
-      const barcodeWidth = 150;
-      const barcodeX = 550 - barcodeWidth; // Adjust this value for positioning
-      const barcodeY = 100; // Adjust this value for positioning
-      doc.image(barcodeImage, barcodeX, barcodeY, { width: barcodeWidth });
-
-      // Contact information
-      doc.fontSize(12).text('Contact Information:');
-      doc.fontSize(10).text('Email: contact@mastermindsshow.com', 50, 170);
-      doc.fontSize(10).text('Phone: +1 (403) 5XX-XXXX', 50, 190);
-
-      // Instructions on how to use the ticket
-      doc.fontSize(12).text('Instructions:');
-      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
-      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
-      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
-      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
-
-      // End document creation
-      doc.end();
-    } catch (error) {
-      console.error('Error:', error);
-      reject(error); // Reject the promise if an error occurs
-    }
-  });
-
-  return pdfBufferPromise;
-}
 
 
 
