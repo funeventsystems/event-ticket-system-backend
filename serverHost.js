@@ -143,7 +143,7 @@ async function generatePDF(uniqueIds) {
     doc.on('error', reject);
 
     let currentPage = 1;
-    const maxBarcodesPerPage = 12;
+    const maxBarcodesPerPage = 3;
     const barcodeSpacing = 20;
     const barcodeWidth = 150;
     let barcodeCount = 0;
