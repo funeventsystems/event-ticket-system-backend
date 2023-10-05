@@ -241,7 +241,7 @@ async function generatePDF(uniqueIds) {
 
     for (let i = 0; i < uniqueIds.length; i++) {
       const barcodeData = uniqueIds[i];
-      const x = 250;
+      const x = 350;
       const y = 200 + (barcodeCount * (barcodeSpacing + barcodeWidth));
 
       await addBarcodeWithDelay(barcodeData, x, y, i);
