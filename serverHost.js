@@ -142,29 +142,63 @@ async function generatePDF(uniqueIds) {
     doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
     doc.on('error', reject);
 
-    // Add the logo in the top left corner
-    doc.image('logo.png', 50, 50, { width: 100 });
-
-    // Title and show information
-    doc.fontSize(20).text('MASTERMINDS Show Tickets', 200, 50);
-
-    // Generate and add barcodes for each unique ID
+    let currentPage = 1;
+    const maxBarcodesPerPage = 4;
     const barcodeSpacing = 20;
     const barcodeWidth = 150;
+    let barcodeCount = 0;
+
+    // Function to add a new page
+    function addNewPage() {
+      doc.addPage();
+      currentPage++;
+      barcodeCount = 0;
+    }
+
+    // Add the logo on each page
+    function addLogo() {
+      doc.image('logo.png', 50, 50, { width: 100 });
+    }
+
+    // Add title and show information on each page
+    function addTitleAndInfo() {
+      doc.fontSize(20).text('MASTERMINDS Show Tickets', 200, 50);
+    }
+
+    // Add instructions on how to use the ticket on each page
+    function addInstructions() {
+      doc.fontSize(12).text('Instructions:');
+      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
+      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
+      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
+      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
+    }
 
     for (let i = 0; i < uniqueIds.length; i++) {
+      if (barcodeCount >= maxBarcodesPerPage) {
+        addNewPage();
+        addLogo();
+        addTitleAndInfo();
+        addInstructions();
+      }
+
       const barcodeData = uniqueIds[i];
       const barcodeApiUrl = `https://barcodeapi.org/api/128/${barcodeData}`;
 
       try {
+        if (barcodeCount > 0) {
+          doc.translate(0, barcodeSpacing);
+        }
+
         const response = await axios.get(barcodeApiUrl, { responseType: 'arraybuffer' });
         const barcodeImage = response.data;
 
-        // Calculate position for each barcode on a new row
+        // Calculate position for each barcode
         const barcodeX = 50;
-        const barcodeY = 200 + i * (barcodeWidth + barcodeSpacing);
+        const barcodeY = 200;
 
         doc.image(barcodeImage, barcodeX, barcodeY, { width: barcodeWidth });
+        barcodeCount++;
       } catch (error) {
         console.error('Error:', error);
         reject(error); // Reject the promise if an error occurs
@@ -177,6 +211,7 @@ async function generatePDF(uniqueIds) {
 
   return pdfBufferPromise;
 }
+
 
 
 app.post('/api/verifyticket/:ticketId', (req, res) => {
