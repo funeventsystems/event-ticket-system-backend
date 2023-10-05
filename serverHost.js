@@ -186,15 +186,35 @@ async function generatePDF(uniqueIds) {
     }
 
     // Add instructions on how to use the ticket on each page
-    function addInstructions() {
-      doc.fontSize(12).text('Instructions:');
-      doc.fontSize(10).text('‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎   ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎                  ', 50, 240);
-      doc.fontSize(10).text('      ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎           ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎    ', 50, 260);
-      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
-      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
-      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
-      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
-    }
+   // Add instructions on how to use the ticket on each page
+function addInstructions() {
+  doc.fontSize(12); // Set the font size for instructions
+  const instructionText = [
+    'Instructions:',
+    '1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.',
+    '2. For date changes or questions, please contact us.',
+    '3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.',
+    '4. Keep this ticket safe; it serves as your receipt for show exchanges.',
+  ];
+
+  // Calculate the available width for text
+  const availableWidth = 410;
+
+  // Calculate the Y-coordinate for the starting point of the text
+  let textY = 240;
+
+  instructionText.forEach((line) => {
+    // Calculate the lines that fit within the available width
+    const lines = doc
+      .font('Helvetica')
+      .text(line, 50, textY, { width: availableWidth })
+      .text();
+
+    // Increment the Y-coordinate for the next line
+    textY += lines.length * 12; // Adjust the font size as needed
+  });
+}
+
 
     // Function to add a barcode with a delay
     async function addBarcodeWithDelay(barcodeData, x, y, barcodeIndex) {
