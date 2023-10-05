@@ -80,7 +80,7 @@
             const selectedDate = document.querySelector('input[name="date"]:checked');
             const date = selectedDate ? selectedDate.value : '';
             const email = emailInput.value;
-            const amount = amountInput.value; // Get the ticket amount
+            const amount = parseInt(amountInput.value, 10); // Parse the amount as an integer
             const response = await fetch('/api/registershow', {
                 method: 'POST',
                 headers: {
