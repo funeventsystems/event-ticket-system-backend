@@ -32,7 +32,27 @@ app.get('/verify', (req, res) => {
 app.get('/admins', (req, res) => {
   res.sendFile(path.join(staticDir, 'admin.html'));
 });
+let isProcessing = false;
+const requestQueue = [];
 
+async function processQueue() {
+  if (isProcessing) {
+    return;
+  }
+
+  isProcessing = true;
+
+  while (requestQueue.length > 0) {
+    const request = requestQueue.shift();
+    try {
+      await request.handler();
+    } catch (error) {
+      console.error('Error processing request:', error);
+    }
+  }
+
+  isProcessing = false;
+}
 app.get('/api/tickets-html', (req, res) => {
   const rawData = fs.readFileSync('tickets.json');
   const tickets = JSON.parse(rawData);
@@ -92,9 +112,8 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 
 
 app.post('/api/registershow', async (req, res) => {
-  const { amount, ...registerData } = req.body; // Extract 'amount' from the request body
+ const { amount, ...registerData } = req.body;
 
-  // Validate 'amount' to ensure it's a positive integer
   if (!Number.isInteger(amount) || amount <= 0) {
     return res.status(400).json({ error: 'Invalid ticket amount' });
   }
@@ -102,7 +121,6 @@ app.post('/api/registershow', async (req, res) => {
   const upcomingRegister = JSON.parse(fs.readFileSync('tickets.json'));
   const uniqueIds = [];
 
-  // Generate the specified number of tickets and unique IDs
   for (let i = 0; i < amount; i++) {
     const uniqueId = generateUniqueId(6);
     uniqueIds.push(uniqueId);
@@ -122,14 +140,15 @@ app.post('/api/registershow', async (req, res) => {
   fs.writeFileSync('tickets.json', JSON.stringify(upcomingRegister, null, 2));
   res.json({ message: 'Registrations added successfully', uniqueIds });
 
-  // Generate a single PDF containing all the barcodes
-  try {
-    const pdfBuffer = await generatePDF(uniqueIds);
-    await sendEmail(registerData, pdfBuffer, uniqueIds);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred while sending the email' });
-  }
+  // Queue the generation and email sending process
+  requestQueue.push({
+    handler: async () => {
+      const pdfBuffer = await generatePDF(uniqueIds);
+      await sendEmail(registerData, pdfBuffer, uniqueIds);
+    },
+  });
+
+  processQueue(); // Start processing the queue
 });
 
 
