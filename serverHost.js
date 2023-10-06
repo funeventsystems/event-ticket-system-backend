@@ -355,6 +355,37 @@ async function sendEmail(registerData, pdfBuffer, uniqueIds) {
 
   await transporter.sendMail(mailOptions);
 }
+app.get('/edit-ticket', (req, res) => {
+    res.sendFile(path.join(staticDir, 'edit-ticket.html'));
+});
+
+app.post('/api/edit-ticket', (req, res) => {
+    const { ticketId, date, email, livestreamurl } = req.body;
+
+    // Read the JSON data from the 'tickets.json' file
+    const rawData = fs.readFileSync('tickets.json');
+
+    // Parse the JSON data into an array
+    const tickets = JSON.parse(rawData);
+
+    // Find the ticket with the given ID
+    const ticketIndex = tickets.findIndex((ticket) => ticket.id === ticketId);
+
+    if (ticketIndex === -1) {
+        console.log('Ticket not found');
+        return res.status(404).json({ error: 'Ticket not found' });
+    }
+
+    // Update the ticket data
+    tickets[ticketIndex].date = date;
+    tickets[ticketIndex].email = email;
+    tickets[ticketIndex].livestreamurl = livestreamurl;
+
+    // Save the updated ticket data back to 'tickets.json'
+    fs.writeFileSync('tickets.json', JSON.stringify(tickets, null, 2));
+
+    res.json({ message: 'Ticket updated successfully' });
+});
 
 
 // ...
