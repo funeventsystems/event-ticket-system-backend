@@ -32,6 +32,9 @@ app.get('/verify', (req, res) => {
 app.get('/admins', (req, res) => {
   res.sendFile(path.join(staticDir, 'admin.html'));
 });
+app.get('/edit', (req, res) => {
+  res.sendFile(path.join(staticDir, 'edit-ticket.html'));
+});
 let isProcessing = false;
 const requestQueue = [];
 
