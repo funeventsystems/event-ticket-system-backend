@@ -189,6 +189,8 @@ async function generatePDF(uniqueIds) {
    // Add instructions on how to use the ticket on each page
 function addInstructions() {
   doc.fontSize(12); // Set the font size for instructions
+function addInstructions() {
+  doc.fontSize(12); // Set the font size for instructions
   const instructionText = [
     'Instructions:',
     '1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.',
@@ -205,15 +207,11 @@ function addInstructions() {
 
   instructionText.forEach((line) => {
     // Calculate the lines that fit within the available width
-    const lines = doc
-      .font('Helvetica')
-      .text(line, 50, textY, { width: availableWidth })
-      .text();
-
-    // Increment the Y-coordinate for the next line
-    textY += lines.length * 12; // Adjust the font size as needed
+    doc.font('Helvetica').text(line, 50, textY, { width: availableWidth });
+    textY += 12; // Increment Y-coordinate by a fixed value (font size)
   });
 }
+
 
 
     // Function to add a barcode with a delay
