@@ -1,93 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket System</title>
-    <style> 
-      /* Global styles */
-body {
-  font-family: sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket System</title>
+  <style>
+    /* CSS for all devices */
+    body {
+      font-size: 16px;
+    }
 
-h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+    button {
+      width: 32px;
+      height: 32px;
+    }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-}
+    /* CSS for iPads and smaller devices */
+    @media (max-width: 768px) {
+      body {
+        font-size: 18px;
+      }
 
-input,
-button {
-  width: 100%;
-  padding: 5px;
-  margin-bottom: 5px;
-}
+      button {
+        width: 44px;
+        height: 44px;
+      }
 
-button {
-  cursor: pointer;
-}
+      .nav-menu {
+        display: none;
+      }
 
-/* Styles for the green success screen */
-.success-screen {
-  background-color: #008000;
-  color: #ffffff;
-  font-size: 18px;
-  text-align: center;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-/* Styles for the admin setup form */
-#admin-setup-form {
-  margin-top: 20px;
-}
-
-/* Styles for the ticket result */
-#ticket-result {
-  margin-top: 20px;
-}
-
-/* Styles for the admin setup result */
-#admin-setup-result {
-  margin-top: 20px;
-}
-
-    </style>
+      .hamburger-menu {
+        display: block;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Lookup Ticket</h1>
-    <form id="lookup-form">
-        <label for="ticketId">Ticket ID:</label>
-        <input type="text" id="ticketId" name="ticketId" required>
-        <button type="submit">Lookup</button>
-    </form>
-    <div id="ticket-result"></div>
+  <h1>Lookup Ticket</h1>
+  <form id="lookup-form">
+    <label for="ticketId">Ticket ID:</label>
+    <input type="text" id="ticketId" name="ticketId" required>
+    <button type="submit">Lookup</button>
+  </form>
+  <div id="ticket-result"></div>
 
-    <h1>Admin Setup</h1>
-<!-- Admin Setup Form -->
+  <h1>Admin Setup</h1>
 <form id="admin-setup-form">
-    <label for="date">Select Date:</label><br>
-    <input type="radio" id="date1" name="date" value="2024-5-15" required>
-    <label for="date1">May 15th</label><br>
-    <input type="radio" id="date2" name="date" value="2024-5-16" required>
-    <label for="date2">May 16th</label><br>
-    <label for="email">Email:</label>
-    <input type="text" id="email" name="email" required>
-    
-    <!-- Use type="number" for the amount input -->
+  <label for="date">Select Date:</label><br>
+  <input type="radio" id="date1" name="date" value="2024-5-15" required>
+  <label for="date1">May 15th</label><br>
+  <input type="radio" id="date2" name="date" value="2024-5-16" required>
+  <label for="date2">May 16th</label><br>
+  <label for="email">Email:</label>
+  <input type="text" id="email" name="email" required>
+   
     <label for="amount">Ticket Amount:</label>
-    <input type="number" id="amount" name="amount" min="1" required>
-    
-    <button type="submit">Setup Ticket</button>
+  <input type="number" id="amount" name="amount" min="1" required>
+   
+  <button type="submit">Setup Ticket</button>
 </form>
 
-    <div id="admin-setup-result"></div>
+  <div id="admin-setup-result"></div>
 
-    <!-- Green success screen -->
     <div class="success-screen" id="success-screen"></div>
 
     <script>
