@@ -3,107 +3,98 @@
 <head>
   <meta charset="utf-8">
   <title>Verify Ticket</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      transition: background-color 0.5s ease-out;
-    }
+      <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
 
-    body.success {
-      background-color: green;
-    }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
 
-    body.error {
-      background-color: red;
-    }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    header {
-      background-color: #333;
-      color: #fff;
-      text-align: center;
-      padding: 1rem 0;
-    }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+        }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem;
-      background-color: #fff;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
+        label {
+            font-weight: bold;
+            display: block;
+        }
 
-    h1 {
-      margin-top: 0;
-      font-size: 24px;
-    }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-    label {
-      font-weight: bold;
-      display: block;
-    }
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+        button:hover {
+            background-color: #555;
+        }
 
-    button {
-      background-color: #333;
-      color: #fff;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #555;
-    }
-
-    .result {
-      margin-top: 1rem;
-    }
-  </style>
+        .result {
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 <body>
 <header>
   <h1>Verify Ticket</h1>
-</header>
-<form id="verifyTicketForm">
-  <label for="ticketId">Enter Ticket ID:</label>
-  <input type="text" id="ticketId" name="ticketId" required>
-  <button type="submit">Verify Ticket</button>
-</form>
+  </header>
+  <form id="verifyTicketForm">
+    <label for="ticketId">Enter Ticket ID:</label>
+    <input type="text" id="ticketId" name="ticketId" required>
+    <button type="submit">Verify Ticket</button>
+  </form>
 
-<div id="result"></div>
+  <div id="result"></div>
 
-<script>
-  const form = document.getElementById('verifyTicketForm');
-  const resultDiv = document.getElementById('result');
+  <script>
+    const form = document.getElementById('verifyTicketForm');
+    const resultDiv = document.getElementById('result');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const ticketId = document.getElementById('ticketId').value;
-    const response = await fetch(`/api/verifyticket/<span class="math-inline">\{ticketId\}\`, \{
-method\: 'POST',
-\}\);
-const data \= await response\.json\(\);
-if \(response\.ok\) \{
-document\.body\.classList\.add\('success'\);
-resultDiv\.innerHTML \= \`<p\></span>{data.message}</p>`;
-    } else {
-      document.body.classList.add('error');
-      resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
-    }
-  });
-</script>
+      const ticketId = document.getElementById('ticketId').value;
+      const response = await fetch(`/api/verifyticket/${ticketId}`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        resultDiv.innerHTML = `<p>${data.message}</p>`;
+      } else {
+        resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+      }
+    });
+  </script>
 </body>
 </html>
