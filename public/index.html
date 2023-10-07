@@ -1,68 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ticket System</title>
-  <style>
-    /* CSS for all devices */
-    body {
-      font-size: 16px;
-    }
-
-    button {
-      width: 32px;
-      height: 32px;
-    }
-
-    /* CSS for iPads and smaller devices */
-    @media (max-width: 768px) {
-      body {
-        font-size: 18px;
-      }
-
-      button {
-        width: 44px;
-        height: 44px;
-      }
-
-      .nav-menu {
-        display: none;
-      }
-
-      .hamburger-menu {
-        display: block;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket System</title>
+    <style> 
+        /* CSS for the green screen */
+        .success-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: green;
+            opacity: 0;
+            transition: opacity 2s;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
 </head>
 <body>
-  <h1>Lookup Ticket</h1>
-  <form id="lookup-form">
-    <label for="ticketId">Ticket ID:</label>
-    <input type="text" id="ticketId" name="ticketId" required>
-    <button type="submit">Lookup</button>
-  </form>
-  <div id="ticket-result"></div>
+    <h1>Lookup Ticket</h1>
+    <form id="lookup-form">
+        <label for="ticketId">Ticket ID:</label>
+        <input type="text" id="ticketId" name="ticketId" required>
+        <button type="submit">Lookup</button>
+    </form>
+    <div id="ticket-result"></div>
 
-  <h1>Admin Setup</h1>
+    <h1>Admin Setup</h1>
+<!-- Admin Setup Form -->
 <form id="admin-setup-form">
-  <label for="date">Select Date:</label><br>
-  <input type="radio" id="date1" name="date" value="2024-5-15" required>
-  <label for="date1">May 15th</label><br>
-  <input type="radio" id="date2" name="date" value="2024-5-16" required>
-  <label for="date2">May 16th</label><br>
-  <label for="email">Email:</label>
-  <input type="text" id="email" name="email" required>
-   
+    <label for="date">Select Date:</label><br>
+    <input type="radio" id="date1" name="date" value="2024-5-15" required>
+    <label for="date1">May 15th</label><br>
+    <input type="radio" id="date2" name="date" value="2024-5-16" required>
+    <label for="date2">May 16th</label><br>
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" required>
+    
+    <!-- Use type="number" for the amount input -->
     <label for="amount">Ticket Amount:</label>
-  <input type="number" id="amount" name="amount" min="1" required>
-   
-  <button type="submit">Setup Ticket</button>
+    <input type="number" id="amount" name="amount" min="1" required>
+    
+    <button type="submit">Setup Ticket</button>
 </form>
 
-  <div id="admin-setup-result"></div>
+    <div id="admin-setup-result"></div>
 
+    <!-- Green success screen -->
     <div class="success-screen" id="success-screen"></div>
 
     <script>
