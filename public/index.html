@@ -5,19 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket System</title>
     <style> 
-        /* CSS for the green screen */
-        .success-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: green;
-            opacity: 0;
-            transition: opacity 2s;
-            pointer-events: none;
-            z-index: 9999;
-        }
+      /* Global styles */
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input,
+button {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Styles for the green success screen */
+.success-screen {
+  background-color: #008000;
+  color: #ffffff;
+  font-size: 18px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Styles for the admin setup form */
+#admin-setup-form {
+  margin-top: 20px;
+}
+
+/* Styles for the ticket result */
+#ticket-result {
+  margin-top: 20px;
+}
+
+/* Styles for the admin setup result */
+#admin-setup-result {
+  margin-top: 20px;
+}
+
     </style>
 </head>
 <body>
