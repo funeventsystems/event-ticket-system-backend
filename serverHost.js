@@ -147,7 +147,9 @@ app.post('/api/registershow', async (req, res) => {
   // Queue the generation and email sending process
   requestQueue.push({
     handler: async () => {
-      const pdfBuffer = await generatePDF(uniqueIds);
+      const pdfFolderPath = path.join(__dirname, 'pdfs'); // Specify the folder where PDFs will be saved
+const pdfFilePath = await generatePDF(uniqueIds, pdfFolderPath);
+
       await sendEmail(registerData, pdfBuffer, uniqueIds);
     },
   });
