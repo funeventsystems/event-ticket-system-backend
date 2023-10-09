@@ -120,18 +120,19 @@
         const senderNameInput = document.getElementById('senderName');
         const giftMessageInput = document.getElementById('giftMessage');
 
-        giftTicketForm.addEventListener('submit', async (e) => {
+         giftTicketForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const recipientEmail = recipientEmailInput.value;
             const senderName = senderNameInput.value;
             const giftMessage = giftMessageInput.value;
 
+            // Send a POST request to the server for gift ticket registration
             const response = await fetch('/api/giftticket', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ recipientEmail, senderName, giftMessage, date, email, amount }), // Include recipient email, sender name, and gift message
+                body: JSON.stringify({ recipientEmail, senderName, giftMessage }), // Include recipient email, sender name, and gift message
             });
 
             const data = await response.json();
