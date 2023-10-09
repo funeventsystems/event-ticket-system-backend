@@ -1,4 +1,4 @@
-const express = require('express');
+express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 
@@ -147,42 +147,23 @@ app.post('/api/registershow', async (req, res) => {
   // Queue the generation and email sending process
   requestQueue.push({
     handler: async () => {
-      const pdfFolderPath = path.join(__dirname, 'pdfs'); // Specify the folder where PDFs will be saved
-const pdfFilePath = await generatePDF(uniqueIds, pdfFolderPath);
-
+      const pdfBuffer = await generatePDF(uniqueIds);
       await sendEmail(registerData, pdfBuffer, uniqueIds);
     },
   });
-requestQueue.push({
-  handler: async () => {
-    const pdfFolderPath = path.join(__dirname, 'pdfs'); // Specify the folder where PDFs will be saved
-    const pdfFilePath = await generatePDF(uniqueIds, pdfFolderPath);
-    await sendEmail(registerData, pdfFilePath, uniqueIds);
-  },
-});
+
   processQueue(); // Start processing the queue
 });
 
-async function generatePDF(uniqueIds, pdfFolderPath) {
+
+async function generatePDF(uniqueIds) {
   const doc = new PDFDocument();
-
-  // Create a write stream for the PDF file
-  const pdfFileName = `${uniqueIds[0]}.pdf`; // Assuming you want to use the first unique ID as the file name
-  const pdfFilePath = path.join(pdfFolderPath, pdfFileName);
-  const pdfStream = fs.createWriteStream(pdfFilePath);
-
-  // Pipe the PDF content to the write stream
-  doc.pipe(pdfStream);
 
   // Create a promise to handle PDF generation
   const pdfBufferPromise = new Promise(async (resolve, reject) => {
     const pdfBuffer = [];
     doc.on('data', (chunk) => pdfBuffer.push(chunk));
-    doc.on('end', () => {
-      const pdfBufferConcatenated = Buffer.concat(pdfBuffer);
-      fs.writeFileSync(pdfFilePath, pdfBufferConcatenated); // Save the PDF to the specified folder
-      resolve(pdfBufferConcatenated);
-    });
+    doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
     doc.on('error', reject);
 
     let currentPage = 1;
@@ -211,6 +192,8 @@ async function generatePDF(uniqueIds, pdfFolderPath) {
     // Add instructions on how to use the ticket on each page
     function addInstructions() {
       doc.fontSize(12).text('Instructions:');
+      doc.fontSize(10).text('‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎   ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎                  ', 50, 240);
+      doc.fontSize(10).text('      ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎           ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎    ', 50, 260);
       doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
       doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
       doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
@@ -272,10 +255,8 @@ async function generatePDF(uniqueIds, pdfFolderPath) {
     doc.end();
   });
 
-  // Wait for the PDF generation to complete and return the promise
   return pdfBufferPromise;
 }
-
 
 
 
