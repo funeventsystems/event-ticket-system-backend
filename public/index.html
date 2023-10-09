@@ -56,7 +56,8 @@
 
         <label for="giftMessage">Gift Message:</label>
         <textarea id="giftMessage" name="giftMessage"></textarea>
-
+<label for="ticketAmount">Ticket Amount:</label>
+    <input type="number" id="ticketAmount" name="ticketAmount" min="1" required>
         <button type="submit">Gift Ticket</button>
     </form>
 
@@ -116,34 +117,36 @@
             }
         });
         const giftTicketForm = document.getElementById('gift-ticket-form');
-        const recipientEmailInput = document.getElementById('recipientEmail');
-        const senderNameInput = document.getElementById('senderName');
-        const giftMessageInput = document.getElementById('giftMessage');
+const recipientEmailInput = document.getElementById('recipientEmail');
+const senderNameInput = document.getElementById('senderName');
+const giftMessageInput = document.getElementById('giftMessage');
+const ticketAmountInput = document.getElementById('ticketAmount'); // Get the ticket amount input for gift
 
-         giftTicketForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const recipientEmail = recipientEmailInput.value;
-            const senderName = senderNameInput.value;
-            const giftMessage = giftMessageInput.value;
+giftTicketForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const recipientEmail = recipientEmailInput.value;
+    const senderName = senderNameInput.value;
+    const giftMessage = giftMessageInput.value;
+    const ticketAmount = parseInt(ticketAmountInput.value, 10); // Parse the ticket amount as an integer
 
-            // Send a POST request to the server for gift ticket registration
-            const response = await fetch('/api/giftticket', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ recipientEmail, senderName, giftMessage }), // Include recipient email, sender name, and gift message
-            });
+    // Send a POST request to the server for gift ticket registration
+    const response = await fetch('/api/giftticket', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ recipientEmail, senderName, giftMessage, ticketAmount }), // Include recipient email, sender name, gift message, and ticket amount
+    });
 
-            const data = await response.json();
-            if (response.ok) {
-                // Display a success message or perform any other desired action
-                console.log(data.message);
-            } else {
-                // Display an error message or handle errors as needed
-                console.error(data.error);
-            }
-        });
+    const data = await response.json();
+    if (response.ok) {
+        // Display a success message or perform any other desired action
+        console.log(data.message);
+    } else {
+        // Display an error message or handle errors as needed
+        console.error(data.error);
+    }
+});
     </script>
 </body>
 </html>
