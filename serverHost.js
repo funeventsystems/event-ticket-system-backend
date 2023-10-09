@@ -1,7 +1,6 @@
-express = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const { SingleBar } = require('cli-progress');
 
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -93,7 +92,6 @@ app.get('/api/tickets-html', (req, res) => {
   res.send(htmlContent);
 });
 
-
 app.get('/api/ticket/:ticketId', (req, res) => {
   // Read the JSON data from the 'tickets.json' file
   const rawData = fs.readFileSync('tickets.json');
@@ -159,7 +157,7 @@ app.post('/api/registershow', async (req, res) => {
 
 async function generatePDF(uniqueIds) {
   const doc = new PDFDocument();
-const progressBar = createProgressBar(uniqueIds.length); // Create a progress bar
+
   // Create a promise to handle PDF generation
   const pdfBufferPromise = new Promise(async (resolve, reject) => {
     const pdfBuffer = [];
@@ -230,17 +228,6 @@ const progressBar = createProgressBar(uniqueIds.length); // Create a progress ba
 
         // Log the generated barcode and its position
         console.log(`Generated Barcode ${barcodeIndex + 1} of ${uniqueIds.length}: ${barcodeData}`);
-for (let i = 0; i < uniqueIds.length; i++) {
-    const barcodeData = uniqueIds[i];
-    const x = 450;
-    const y = 200 + (barcodeCount * (barcodeSpacing + barcodeWidth));
-
-    await addBarcodeWithDelay(barcodeData, x, y, i);
-
-    progressBar.update(i + 1); // Update the progress bar
-  }
-
-  progressBar.stop(); // Stop the progress bar when done
 
         // Delay for a moment before adding the next barcode
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
@@ -368,10 +355,8 @@ async function sendEmail(registerData, pdfBuffer, uniqueIds) {
       },
     ],
   };
- 
+
   await transporter.sendMail(mailOptions);
-  console.log('Email sent successfully to:', registerData.email);
-  
 }
 app.get('/edit-ticket', (req, res) => {
     res.sendFile(path.join(staticDir, 'edit-ticket.html'));
@@ -405,18 +390,6 @@ app.post('/api/edit-ticket', (req, res) => {
     res.json({ message: 'Ticket updated successfully' });
 });
 
-function createProgressBar(total) {
-  const progressBar = new SingleBar({
-    format: 'Generating Barcodes |' + '{bar}' + '| {percentage}% | ETA: {eta}s | {value}/{total}',
-    barCompleteChar: '\u2588',
-    barIncompleteChar: '\u2591',
-    hideCursor: true,
-  });
-
-  progressBar.start(total, 0);
-
-  return progressBar;
-}
 
 // ...
 
