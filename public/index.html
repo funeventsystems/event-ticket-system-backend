@@ -46,6 +46,19 @@
     
     <button type="submit">Setup Ticket</button>
 </form>
+<h1>Gift a Ticket</h1>
+    <form id="gift-ticket-form">
+        <label for="recipientEmail">Recipient's Email:</label>
+        <input type="text" id="recipientEmail" name="recipientEmail" required>
+
+        <label for="senderName">Your Name:</label>
+        <input type="text" id="senderName" name="senderName" required>
+
+        <label for="giftMessage">Gift Message:</label>
+        <textarea id="giftMessage" name="giftMessage"></textarea>
+
+        <button type="submit">Gift Ticket</button>
+    </form>
 
     <div id="admin-setup-result"></div>
 
@@ -100,6 +113,34 @@
                 }, 2000); // Adjust the delay as needed (2 seconds in this example)
             } else {
                 adminSetupResult.innerHTML = `<p>${data.error}</p>`;
+            }
+        });
+        const giftTicketForm = document.getElementById('gift-ticket-form');
+        const recipientEmailInput = document.getElementById('recipientEmail');
+        const senderNameInput = document.getElementById('senderName');
+        const giftMessageInput = document.getElementById('giftMessage');
+
+        giftTicketForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const recipientEmail = recipientEmailInput.value;
+            const senderName = senderNameInput.value;
+            const giftMessage = giftMessageInput.value;
+
+            const response = await fetch('/api/giftticket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ recipientEmail, senderName, giftMessage, date, email, amount }), // Include recipient email, sender name, and gift message
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Display a success message or perform any other desired action
+                console.log(data.message);
+            } else {
+                // Display an error message or handle errors as needed
+                console.error(data.error);
             }
         });
     </script>
