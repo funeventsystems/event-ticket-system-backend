@@ -91,109 +91,7 @@ app.get('/api/tickets-html', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.send(htmlContent);
 });
-app.post('/api/giftticket', async (req, res) => {
-  try {
-    const { amount, senderName, giftMessage, ...registerData } = req.body;
 
-    if (!Number.isInteger(amount) || amount <= 0) {
-      return res.status(400).json({ error: 'Invalid ticket amount' });
-    }
-
-    const upcomingRegister = JSON.parse(fs.readFileSync('tickets.json'));
-    const uniqueIds = [];
-
-    for (let i = 0; i < amount; i++) {
-      const uniqueId = generateUniqueId(6);
-      uniqueIds.push(uniqueId);
-
-      const newRegister = { ...registerData, id: uniqueId };
-
-      // Include sender's name and gift message in the registration data
-      newRegister.senderName = senderName;
-      newRegister.giftMessage = giftMessage;
-
-      if (newRegister.date === '2024-5-15') {
-        newRegister.livestreamurl = 'https://youtube.com';
-      }
-      if (newRegister.date === '2024-5-16') {
-        newRegister.livestreamurl = 'show2.url';
-      }
-
-      upcomingRegister.push(newRegister);
-    }
-
-    fs.writeFileSync('tickets.json', JSON.stringify(upcomingRegister, null, 2));
-    res.json({ message: 'Registrations added successfully', uniqueIds });
-
-    // Queue the generation and email sending process
-    requestQueue.push({
-      handler: async () => {
-        const pdfBuffer = await generatePDF(uniqueIds);
-        // Include sender's name and gift message in the email
-        await sendGiftEmail({ ...registerData, senderName, giftMessage }, pdfBuffer, uniqueIds);
-      },
-    });
-
-    processQueue(); // Start processing the queue
-  } catch (error) {
-    console.error('Error registering show:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-async function sendGiftEmail(registerData, pdfBuffer, uniqueIds) {
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: secrets.email, // Use email from secrets.json
-      pass: secrets.password, // Use password from secrets.json
-    },
-  });
-
-  // Use the unique access ID from the argument
-  const uniqueId = uniqueIds[0]; // Assuming you want the first ID
-
-  const htmlContent = `
-    <html>
-      <head>
-        <style>
-          /* Add any CSS styling you want for your email here */
-        </style>
-      </head>
-      <body>
-        <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${uniqueId}.</p>
-        <p>Your selected date is: ${registerData.date}</p>
-        <p> The livestream starts at 7:00 PM, with the waiting room opening at 6:30 PM</p>
-        <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
-        <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
-        <a href="mailto:contact@show.com">Contact@show.com</a>
-        <p> All times are displayed in Mountain Time </p>
-        <p> Enjoy the show! - Masterminds Team</p>
-        
-        <!-- Check if there is a livestream URL and include it in the email -->
-        ${registerData.livestreamurl ? `<p>Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>` : ''}
-
-        <!-- Include sender's name and gift message -->
-        <p>Gifted by: ${registerData.senderName}</p>
-        <p>Gift Message: ${registerData.giftMessage}</p>
-      </body>
-    </html>
-  `;
-
-  const mailOptions = {
-    from: 'your-email@gmail.com',
-    to: registerData.email,
-    subject: 'Registration Confirmation',
-    html: htmlContent,
-    attachments: [
-      {
-        filename: 'DigitalID.pdf',
-        content: pdfBuffer,
-      },
-    ],
-  };
-
-  await transporter.sendMail(mailOptions);
-}
 
 app.get('/api/ticket/:ticketId', (req, res) => {
   // Read the JSON data from the 'tickets.json' file
@@ -253,20 +151,39 @@ app.post('/api/registershow', async (req, res) => {
       await sendEmail(registerData, pdfBuffer, uniqueIds);
     },
   });
-
+requestQueue.push({
+  handler: async () => {
+    const pdfFolderPath = path.join(__dirname, 'pdfs'); // Specify the folder where PDFs will be saved
+    const pdfFilePath = await generatePDF(uniqueIds, pdfFolderPath);
+    await sendEmail(registerData, pdfFilePath, uniqueIds);
+  },
+});
   processQueue(); // Start processing the queue
 });
 
 
-async function generatePDF(uniqueIds) {
+async function generatePDF(uniqueIds, pdfFolderPath) {
   const doc = new PDFDocument();
+
+  // Create a write stream for the PDF file
+  const pdfFileName = `${uniqueIds[0]}.pdf`; // Assuming you want to use the first unique ID as the file name
+  const pdfFilePath = path.join(pdfFolderPath, pdfFileName);
+  const pdfStream = fs.createWriteStream(pdfFilePath);
+
+  // Pipe the PDF content to the write stream
+  doc.pipe(pdfStream);
 
   // Create a promise to handle PDF generation
   const pdfBufferPromise = new Promise(async (resolve, reject) => {
     const pdfBuffer = [];
     doc.on('data', (chunk) => pdfBuffer.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(pdfBuffer)));
+    doc.on('end', () => {
+      const pdfBufferConcatenated = Buffer.concat(pdfBuffer);
+      fs.writeFileSync(pdfFilePath, pdfBufferConcatenated); // Save the PDF to the specified folder
+      resolve(pdfBufferConcatenated);
+    });
     doc.on('error', reject);
+
 
     let currentPage = 1;
     const maxBarcodesPerPage = 3;
@@ -356,7 +273,7 @@ async function generatePDF(uniqueIds) {
     // End document creation
     doc.end();
   });
-
+ return pdfFilePath;
   return pdfBufferPromise;
 }
 
