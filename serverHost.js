@@ -309,13 +309,15 @@ function generateUniqueId(length) {
 
 
 async function sendEmail(registerData, pdfBuffer, uniqueIds) {
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: secrets.email, // Use email from secrets.json
-      pass: secrets.password, // Use password from secrets.json
-    },
-  });
+ const transporter = nodemailer.createTransport({
+  host: 'smtppro.zoho.com',
+  port: 465, // You might need to adjust the port based on Zoho's settings
+  secure: true, // Use secure connection (SSL)
+  auth: {
+    user: secrets.email, // Use email from secrets.json
+    pass: secrets.password, // Use password from secrets.json
+  },
+});
 
   // Use the unique access ID from the argument
   const uniqueId = uniqueIds[0]; // Assuming you want the first ID
