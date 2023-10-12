@@ -48,7 +48,7 @@ app.post('/purchase', (req, res) => {
   // Send an email to admin (customize recipient address)
   const mailOptions = {
     from: secrets.email,
-    to: 'malik@mastermindsyyx.xyz', // Change this to the admin's email
+    to: 'malik@mastermindsyyc.xyz', // Change this to the admin's email
     subject: 'New Ticket Purchase',
     text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nStandard Tickets: ${standardTickets}\nVIP Tickets: ${vipTickets}\nChild Tickets: ${childTickets}`,
   };
