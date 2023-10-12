@@ -60,6 +60,15 @@ async function processQueue() {
   isProcessing = false;
 }
 app.post('/purchase', (req, res) => {
+   const transporter = nodemailer.createTransport({
+  host: 'smtppro.zoho.com',
+  port: 465, // You might need to adjust the port based on Zoho's settings
+  secure: true, // Use secure connection (SSL)
+  auth: {
+    user: secrets.email, // Use email from secrets.json
+    pass: secrets.password, // Use password from secrets.json
+  },
+});
   // Process the form data here
   const { name, email, phone, standardTickets, vipTickets, childTickets } = req.body;
 
