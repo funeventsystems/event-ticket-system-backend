@@ -24,6 +24,9 @@ app.use(express.static(staticDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
+app.get('/styles', (req, res) => {
+  res.sendFile(path.join(staticDir, 'styles.css'));
+});
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(staticDir, 'home.html'));
 });
