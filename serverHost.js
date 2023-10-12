@@ -14,7 +14,8 @@ const axios = require('axios');
 
 const app = express();
 app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 const staticDir = path.join(__dirname, 'public');
 const secrets = require('./secrets.json'); // Load email credentials
 
