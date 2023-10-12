@@ -26,6 +26,9 @@ app.get('/', (req, res) => {
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(staticDir, 'home.html'));
 });
+app.get('/request', (req, res) => {
+  res.sendFile(path.join(staticDir, 'request.html'));
+});
 app.get('/verify', (req, res) => {
   res.sendFile(path.join(staticDir, 'verify.html'));
 });
