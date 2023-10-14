@@ -51,42 +51,23 @@
 
     <div id="admin-setup-result"></div>
 
-    <script>
-        const lookupForm = document.getElementById('lookup-form');
-        const ticketIdInput = document.getElementById('ticketId');
-        const ticketResult = document.getElementById('ticket-result');
-
+     <script>
         const adminSetupForm = document.getElementById('admin-setup-form');
-        const emailInput = document.getElementById('email');
-        const amountInput = document.getElementById('amount'); // Get the ticket amount input
         const adminSetupResult = document.getElementById('admin-setup-result');
         const successScreen = document.getElementById('success-screen');
 
-        lookupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const ticketId = ticketIdInput.value;
-            const response = await fetch(`/api/ticket/${ticketId}`);
-            const data = await response.json();
-            if (response.ok) {
-                ticketResult.innerHTML = `<p>Ticket ID: ${data.id}</p><p>Date: ${data.date}</p><p>Email: ${data.email}</p><p>Livestream URL: ${data.livestreamurl}</p>`;
-            } else {
-                ticketResult.innerHTML = `<p>${data.error}</p>`;
-            }
-        });
-
         adminSetupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const selectedDate = document.querySelector('input[name="date"]:checked');
-            const date = selectedDate ? selectedDate.value : '';
-            const email = emailInput.value;
-            const amount = parseInt(amountInput.value, 10); // Parse the amount as an integer
+
+            // Create a FormData object to collect form data
+            const formData = new FormData(adminSetupForm);
+
+            // Send a POST request with FormData
             const response = await fetch('/api/registershow', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ date, email, amount }), // Include the ticket amount
+                body: formData, // Use FormData object as the body
             });
+
             const data = await response.json();
             if (response.ok) {
                 adminSetupResult.innerHTML = `<p>${data.message}</p>`;
