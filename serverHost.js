@@ -252,7 +252,8 @@ async function generatePDF(uniqueIds) {
       doc.fontSize(12).text('Instructions:');
       doc.fontSize(10).text('‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎   ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎                  ', 50, 240);
       doc.fontSize(10).text('      ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎           ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎    ', 50, 260);
-      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.', 50, 240);
+      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person.', 50, 240);
+      doc.fontSize(10).text(' You can change your viewing method at any time.', 50, 240);
       doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
       doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
       doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
@@ -391,10 +392,10 @@ async function sendEmail(registerData, pdfBuffer, uniqueIds) {
       <body>
         <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${uniqueId}.</p>
         <p>Your selected date is: ${registerData.date}</p>
-        <p> The livestream starts at 7:00 PM, with the waiting room opening at 6:30 PM</p>
-        <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://online.mastermindsshow.com">online.mastermindsshow.com</a>.</p>
+        <p> The livestream starts at 7:00 PM, with the waiting room opening at 6:30 PM, simularily the doors open at 6:30 PM and the show starts at 7:00.</p>
+        <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://tickets.mastermindsyyc.xyz/check">tickets.mastermindsyyc.xyz</a>.</p>
         <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
-        <a href="mailto:contact@show.com">Contact@show.com</a>
+        <a href="mailto:malik@mastermindsyyc.xyz">Malik@mastermindsyyc.xyz</a>
         <p> All times are displayed in Mountain Time </p>
         <p> Enjoy the show! - Masterminds Team</p>
         
