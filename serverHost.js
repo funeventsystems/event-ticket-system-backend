@@ -31,7 +31,7 @@ app.get('/styles', (req, res) => {
 app.get('/check', (req, res) => {
   res.sendFile(path.join(staticDir, 'home.html'));
 });
-app.get('/', (req, res) => {
+app.get('/request', (req, res) => {
   res.sendFile(path.join(staticDir, 'request.html'));
 });
 app.get('/checkin', (req, res) => {
