@@ -354,7 +354,7 @@ app.post('/api/verifyticket/:ticketId', (req, res) => {
 
 // Function to generate a unique ID
 function generateUniqueId(length) {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charset = 'abcdefghijklmnopqrstuvwxyz';
   let id = '';
   for (let i = 0; i < length; i++) {
     const randomIndex = crypto.randomInt(0, charset.length);
