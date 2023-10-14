@@ -405,7 +405,7 @@ async function sendEmail(registerData, pdfBuffer, uniqueIds) {
   `;
 
   const mailOptions = {
-    from: 'your-email@gmail.com',
+    from: 'secrets.email',
     to: registerData.email,
     subject: 'Registration Confirmation',
     html: htmlContent,
