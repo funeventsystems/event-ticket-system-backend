@@ -3,7 +3,70 @@
 <head>
   <meta charset="utf-8">
   <title>Verify Ticket</title>
-  <link rel="stylesheet" href="styles"> <!-- Link to the same stylesheet -->
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    #cube-container {
+      position: relative;
+    }
+    .cube {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      transform-style: preserve-3d;
+      animation: rotate 4s linear infinite, pulsate 2s alternate infinite;
+    }
+    @keyframes rotate {
+      0% {
+        transform: rotateX(0) rotateY(0);
+      }
+      100% {
+        transform: rotateX(360deg) rotateY(360deg);
+      }
+    }
+    @keyframes pulsate {
+      0% {
+        transform: scale(1);
+        background-color: white;
+      }
+      100% {
+        transform: scale(1.2);
+        background-color: white;
+      }
+    }
+    .success-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #00ff00; /* Green */
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2em;
+    }
+    .error-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ff0000; /* Red */
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2em;
+    }
+  </style>
 </head>
 <body>
 <header>
@@ -17,13 +80,23 @@
 
 <div id="result"></div>
 
-<!-- Green success screen -->
-<div class="success-screen" id="success-screen"></div>
+<div id="cube-container">
+  <div class="cube"></div>
+</div>
+
+<div class="success-screen" id="success-screen">
+  Success!
+</div>
+
+<div class="error-screen" id="error-screen">
+  Error!
+</div>
 
 <script>
   const form = document.getElementById('verifyTicketForm');
   const resultDiv = document.getElementById('result');
   const successScreen = document.getElementById('success-screen');
+  const errorScreen = document.getElementById('error-screen');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -38,14 +111,11 @@
     if (response.ok) {
       resultDiv.innerHTML = `<p>${data.message}</p>`;
       // Show the green success screen
-      successScreen.style.opacity = '1';
-      successScreen.style.pointerEvents = 'auto';
-      // Reload the page after a delay
-      setTimeout(() => {
-        location.reload();
-      }, 2000); // Adjust the delay as needed (2 seconds in this example)
+      successScreen.style.display = 'flex';
     } else {
       resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+      // Show the red error screen
+      errorScreen.style.display = 'flex';
     }
   });
 </script>
