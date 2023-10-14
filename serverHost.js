@@ -14,6 +14,7 @@ const axios = require('axios');
 
 const app = express();
 app.use(cookieParser());
+app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const staticDir = path.join(__dirname, 'public');
