@@ -12,112 +12,77 @@
       margin: 0;
       background-color: #f0f0f0;
     }
-    #cube-container {
+    .cube-container {
+      perspective: 1200px;
       position: relative;
+      width: 200px;
+      height: 200px;
     }
     .cube {
-      position: absolute;
-      width: 100px;
-      height: 100px;
+      width: 100%;
+      height: 100%;
       transform-style: preserve-3d;
-      animation: rotate 4s linear infinite, pulsate 2s alternate infinite;
+      transform: rotateX(0deg) rotateY(0deg);
+      animation: rotate 4s linear infinite;
+    }
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      border: 2px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+    }
+    .face.green {
+      background-color: #00ff00;
+      color: white;
+    }
+    .face.red {
+      background-color: #ff0000;
+      color: white;
     }
     @keyframes rotate {
       0% {
-        transform: rotateX(0) rotateY(0);
+        transform: rotateX(0deg) rotateY(0deg);
       }
       100% {
         transform: rotateX(360deg) rotateY(360deg);
       }
     }
-    @keyframes pulsate {
-      0% {
-        transform: scale(1);
-        background-color: white;
-      }
-      100% {
-        transform: scale(1.2);
-        background-color: white;
-      }
-    }
-    .success-screen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #00ff00; /* Green */
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 2em;
-    }
-    .error-screen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #ff0000; /* Red */
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 2em;
-    }
   </style>
 </head>
 <body>
-<header>
-  <h1>Verify Ticket</h1>
-</header>
-<form id="verifyTicketForm">
-  <label for="ticketId">Enter Ticket ID:</label>
-  <input type="text" id="ticketId" name="ticketId" required>
-  <button type="submit">Verify Ticket</button>
-</form>
+<div class="cube-container">
+  <div class="cube">
+    <div class="face">?</div>
+  </div>
+</div>
 
 <div id="result"></div>
 
-<div id="cube-container">
-  <div class="cube"></div>
-</div>
-
-<div class="success-screen" id="success-screen">
-  Success!
-</div>
-
-<div class="error-screen" id="error-screen">
-  Error!
-</div>
-
 <script>
-  const form = document.getElementById('verifyTicketForm');
+  const cube = document.querySelector('.cube');
   const resultDiv = document.getElementById('result');
-  const successScreen = document.getElementById('success-screen');
-  const errorScreen = document.getElementById('error-screen');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  function showSuccess() {
+    resultDiv.innerHTML = 'Ticket Valid';
+    cube.querySelector('.face').textContent = '✔';
+    cube.classList.add('green');
+    cube.classList.remove('red');
+  }
 
-    const ticketId = document.getElementById('ticketId').value;
-    const response = await fetch(`/api/verifyticket/${ticketId}`, {
-      method: 'POST',
-    });
+  function showError() {
+    resultDiv.innerHTML = 'Ticket Invalid';
+    cube.querySelector('.face').textContent = '✘';
+    cube.classList.add('red');
+    cube.classList.remove('green');
+  }
 
-    const data = await response.json();
-
-    if (response.ok) {
-      resultDiv.innerHTML = `<p>${data.message}</p>`;
-      // Show the green success screen
-      successScreen.style.display = 'flex';
-    } else {
-      resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
-      // Show the red error screen
-      errorScreen.style.display = 'flex';
-    }
-  });
+  // Simulate a successful ticket validation (for demonstration purposes)
+  setTimeout(showSuccess, 2000); // Replace with your actual validation logic
 </script>
 </body>
 </html>
