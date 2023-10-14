@@ -22,23 +22,20 @@ const secrets = require('./secrets.json'); // Load email credentials
 
 app.use(express.static(staticDir));
 
-app.get('/', (req, res) => {
+app.get('/admin', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 app.get('/styles', (req, res) => {
   res.sendFile(path.join(staticDir, 'styles.css'));
 });
-app.get('/admin', (req, res) => {
+app.get('/check', (req, res) => {
   res.sendFile(path.join(staticDir, 'home.html'));
 });
-app.get('/request', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'request.html'));
 });
-app.get('/verify', (req, res) => {
+app.get('/checkin', (req, res) => {
   res.sendFile(path.join(staticDir, 'verify.html'));
-});
-app.get('/admins', (req, res) => {
-  res.sendFile(path.join(staticDir, 'admin.html'));
 });
 app.get('/edit', (req, res) => {
   res.sendFile(path.join(staticDir, 'edit-ticket.html'));
