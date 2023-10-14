@@ -74,25 +74,28 @@
             }
         });
 
-        adminSetupForm.addEventListener('submit', async (e) => {
+                adminSetupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const selectedDate = document.querySelector('input[name="date"]:checked');
             const date = selectedDate ? selectedDate.value : '';
             const email = emailInput.value;
-            const amount = parseInt(amountInput.value, 10); // Parse the amount as an integer
+            const amount = parseInt(amountInput.value, 10);
+
             const response = await fetch('/api/registershow', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ date, email, amount }), // Include the ticket amount
+                body: JSON.stringify({ date, email, amount }),
             });
+
             const data = await response.json();
             if (response.ok) {
-                adminSetupResult.innerHTML = `<p>${data.message}</p>`;
                 // Show the green success screen
+                const successScreen = document.getElementById('success-screen');
                 successScreen.style.opacity = '1';
                 successScreen.style.pointerEvents = 'auto';
+
                 // Reload the page after a delay
                 setTimeout(() => {
                     location.reload();
