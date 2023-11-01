@@ -252,7 +252,8 @@ async function generatePDF(uniqueIds) {
      doc.fontSize(12).text('Instructions:', 50, 220);
 
 const instructions = [
-  '1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.',
+  '1. This ticket grants you access to the MASTERMINDS show, either virtually or in person.',
+  ' You can change your viewing method at any time.',
   '2. For date changes or questions, please contact us.',
   '3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.',
   '4. Keep this ticket safe; it serves as your receipt for show exchanges.',
