@@ -1,0 +1,13 @@
+{
+  "name": "Livestream ticket system",
+  "version": "1.0.0",
+  "description": "A basic ticket system",
+  "main": "serverHost.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "fs": "0.0.1-security",
+    "nodemailer": "^7.5.0",
+     "pm2": "^4.5.1"
+  }
+}
