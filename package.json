@@ -8,6 +8,7 @@
     "body-parser": "^1.19.0",
     "fs": "0.0.1-security",
     "nodemailer": "^7.5.0",
-     "pm2": "^4.5.1"
+     "pm2": "^4.5.1",
+    "cookie-parser": "^1.4.5"
   }
 }
