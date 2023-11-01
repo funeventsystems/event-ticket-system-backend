@@ -11,8 +11,10 @@ const PDFDocument = require('pdfkit'); // Import PDFKit for PDF generation
 const JsBarcode = require('jsbarcode'); // Import the jsbarcode library
 const stream = require('stream');
 const axios = require('axios');
+const cors = require('cors'); // Import the CORS middleware
 
 const app = express();
+app.use(cors()); // Enable CORS for all routes
 app.use(cookieParser());
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true }));
