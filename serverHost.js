@@ -249,14 +249,21 @@ async function generatePDF(uniqueIds) {
 
     // Add instructions on how to use the ticket on each page
     function addInstructions() {
-      doc.fontSize(12).text('Instructions:');
-      doc.fontSize(10).text('‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎   ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎                  ', 50, 240);
-      doc.fontSize(10).text('      ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎           ‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎    ', 50, 260);
-      doc.fontSize(10).text('1. This ticket grants you access to the MASTERMINDS show, either virtually or in person.', 50, 240);
-      doc.fontSize(10).text(' You can change your viewing method at any time.', 50, 240);
-      doc.fontSize(10).text('2. For date changes or questions, please contact us.', 50, 260);
-      doc.fontSize(10).text('3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.', 50, 280);
-      doc.fontSize(10).text('4. Keep this ticket safe; it serves as your receipt for show exchanges.', 50, 300);
+     doc.fontSize(12).text('Instructions:', 50, 220);
+
+const instructions = [
+  '1. This ticket grants you access to the MASTERMINDS show, either virtually or in person. You can change your viewing method at any time.',
+  '2. For date changes or questions, please contact us.',
+  '3. You can access the livestream (if available) via the provided email link or by using your unique access code on the website.',
+  '4. Keep this ticket safe; it serves as your receipt for show exchanges.',
+];
+
+const yStart = 240;
+const lineHeight = 20;
+
+instructions.forEach((instruction, index) => {
+  doc.fontSize(10).text(instruction, 50, yStart + index * lineHeight);
+});
     }
 
     // Function to add a barcode with a delay
