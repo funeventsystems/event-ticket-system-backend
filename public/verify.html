@@ -19,6 +19,7 @@
 
 <!-- Green success screen -->
 <div class="success-screen" id="success-screen"></div>
+<div class="fail-screen" id="success-screen"></div>
 
 <script>
   const form = document.getElementById('verifyTicketForm');
@@ -46,6 +47,11 @@
       }, 2000); // Adjust the delay as needed (2 seconds in this example)
     } else {
       resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+      failScreen.style.opacity = '1';
+      failScreen.style.pointerEvents = 'auto';
+      // Reload the page after a delay
+      setTimeout(() => {
+        location.reload();
     }
   });
 </script>
