@@ -113,7 +113,7 @@ app.post('/purchase', (req, res) => {
   });
 
   // Respond with a confirmation or redirect to a thank you page
-  res.send('Thank you for your purchase!');
+  res.send('Your request has been received, and will be reviewed by a member of our team shortly.');
 });
 app.get('/api/tickets-html', (req, res) => {
   const rawData = fs.readFileSync('tickets.json');
