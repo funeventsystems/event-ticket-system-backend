@@ -3,86 +3,51 @@
 <head>
   <meta charset="utf-8">
   <title>Verify Ticket</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .cube-container {
-      perspective: 1200px;
-      position: relative;
-      width: 200px;
-      height: 200px;
-    }
-    .cube {
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transform: rotateX(0deg) rotateY(0deg);
-      animation: rotate 4s linear infinite;
-    }
-    .face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: white;
-      border: 2px solid #ccc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 2em;
-    }
-    .face.green {
-      background-color: #00ff00;
-      color: white;
-    }
-    .face.red {
-      background-color: #ff0000;
-      color: white;
-    }
-    @keyframes rotate {
-      0% {
-        transform: rotateX(0deg) rotateY(0deg);
-      }
-      100% {
-        transform: rotateX(360deg) rotateY(360deg);
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles"> <!-- Link to the same stylesheet -->
 </head>
 <body>
-<div class="cube-container">
-  <div class="cube">
-    <div class="face">?</div>
-  </div>
-</div>
+<header>
+  <h1>Verify Ticket</h1>
+</header>
+<form id="verifyTicketForm">
+  <label for="ticketId">Enter Ticket ID:</label>
+  <input type="text" id="ticketId" name="ticketId" required>
+  <button type="submit">Verify Ticket</button>
+</form>
 
 <div id="result"></div>
 
+<!-- Green success screen -->
+<div class="success-screen" id="success-screen"></div>
+
 <script>
-  const cube = document.querySelector('.cube');
+  const form = document.getElementById('verifyTicketForm');
   const resultDiv = document.getElementById('result');
+  const successScreen = document.getElementById('success-screen');
 
-  function showSuccess() {
-    resultDiv.innerHTML = 'Ticket Valid';
-    cube.querySelector('.face').textContent = '✔';
-    cube.classList.add('green');
-    cube.classList.remove('red');
-  }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  function showError() {
-    resultDiv.innerHTML = 'Ticket Invalid';
-    cube.querySelector('.face').textContent = '✘';
-    cube.classList.add('red');
-    cube.classList.remove('green');
-  }
+    const ticketId = document.getElementById('ticketId').value;
+    const response = await fetch(`/api/verifyticket/${ticketId}`, {
+      method: 'POST',
+    });
 
-  // Simulate a successful ticket validation (for demonstration purposes)
-  setTimeout(showSuccess, 2000); // Replace with your actual validation logic
+    const data = await response.json();
+
+    if (response.ok) {
+      resultDiv.innerHTML = `<p>${data.message}</p>`;
+      // Show the green success screen
+      successScreen.style.opacity = '1';
+      successScreen.style.pointerEvents = 'auto';
+      // Reload the page after a delay
+      setTimeout(() => {
+        location.reload();
+      }, 2000); // Adjust the delay as needed (2 seconds in this example)
+    } else {
+      resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+    }
+  });
 </script>
 </body>
 </html>
