@@ -359,7 +359,7 @@ app.post('/api/verifyticket/:ticketId', (req, res) => {
   // Save the updated ticket data back to 'tickets.json'
   fs.writeFileSync('tickets.json', JSON.stringify(tickets, null, 2));
 
-  res.json({ message: 'Ticket verified and marked as used successfully' });
+  return res.status(200).json({ message: 'Ticket verified and marked as used successfully' });
 });
 
 
