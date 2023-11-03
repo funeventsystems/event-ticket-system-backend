@@ -26,32 +26,43 @@
   const resultDiv = document.getElementById('result');
   const successScreen = document.getElementById('success-screen');
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const ticketId = document.getElementById('ticketId').value;
-    const response = await fetch(`/api/verifyticket/${ticketId}`, {
-      method: 'POST',
-    });
+    const xhr = new XMLHttpRequest();
 
-    const data = await response.json();
+    xhr.open('POST', `/api/verifyticket/${ticketId}`, true);
 
-    if (response.ok) {
-      resultDiv.innerHTML = `<p>${data.message}</p>`;
-      // Show the green success screen
-      successScreen.style.opacity = '1';
-      successScreen.style.pointerEvents = 'auto';
-      // Reload the page after a delay
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const data = JSON.parse(xhr.responseText);
+        resultDiv.innerHTML = `<p>${data.message}</p>`;
+        // Show the green success screen
+        successScreen.style.opacity = '1';
+        successScreen.style.pointerEvents = 'auto';
+        // Reload the page after a delay
+        setTimeout(() => {
+          location.reload();
+        }, 2000); // Adjust the delay as needed (2 seconds in this example)
+      } else {
+        resultDiv.innerHTML = `<p>An error occurred.</p>`;
+        setTimeout(() => {
+          location.reload();
+        }, 2000); // Adjust the delay as needed (2 seconds in this example)
+      }
+    };
+
+    xhr.onerror = function () {
+      resultDiv.innerHTML = `<p>An error occurred.</p>`;
       setTimeout(() => {
         location.reload();
       }, 2000); // Adjust the delay as needed (2 seconds in this example)
-    } else {
-      resultDiv.innerHTML = `<p>${data.message}</p>`;
-      setTimeout(() => {
-        location.reload();
-      }, 2000); // Adjust the delay as needed (2 seconds in this example)
-    }
+    };
+
+    xhr.send();
   });
 </script>
+
 </body>
 </html>
