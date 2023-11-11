@@ -24,6 +24,9 @@ const secrets = require('./secrets.json'); // Load email credentials
 
 app.use(express.static(staticDir));
 
+app.get('/', (red, res) => {
+  res.sendFile(path.join(staticDir, 'home.html'));
+});
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
@@ -42,6 +45,7 @@ app.get('/checkin', (req, res) => {
 app.get('/edit', (req, res) => {
   res.sendFile(path.join(staticDir, 'edit-ticket.html'));
 });
+
 let isProcessing = false;
 const requestQueue = [];
 
