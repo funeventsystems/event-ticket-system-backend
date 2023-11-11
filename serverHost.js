@@ -21,7 +21,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const staticDir = path.join(__dirname, 'public');
 const secrets = require('./secrets.json'); // Load email credentials
-
+async function sendErrorMessage(errorMsg) {
+  try {
+    const endpoint = 'http://10.0.0.169:83/pi_alerta';
+    const data = `message=${errorMsg}`;
+    
+    const response = await axios.post(endpoint, data);
+    
+    if (response.status === 200) {
+      console.log('Error message sent successfully');
+    } else {
+      console.error('Failed to send error message');
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
 app.use(express.static(staticDir));
 
 app.get('/', (red, res) => {
