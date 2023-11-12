@@ -77,6 +77,7 @@ async function processQueue() {
       await request.handler();
     } catch (error) {
       console.error('Error processing request:', error);
+      sendErrorMessage(error);
     }
   }
 
@@ -103,13 +104,14 @@ app.post('/purchase', (req, res) => {
     vipTickets,
     childTickets,
   };
-
+  sendErrorMessage("new ticket request", data);
   // Save data to a JSON file (customize the file path)
   const dataFilePath = 'data.json';
   fs.readFile(dataFilePath, (err, fileData) => {
     if (err) {
       const jsonData = [data];
       fs.writeFileSync(dataFilePath, JSON.stringify(jsonData));
+      sendErrorMessage(err);
     } else {
       const jsonData = JSON.parse(fileData);
       jsonData.push(data);
@@ -128,8 +130,10 @@ app.post('/purchase', (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log('Email not sent:', error);
+      sendErrorMessage(error);
     } else {
       console.log('Email sent:', info.response);
+      sendErrorMessage(error);
     }
   });
 
