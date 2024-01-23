@@ -429,7 +429,7 @@ async function sendEmail(registerData, pdfBuffer, uniqueIds) {
         <p> The livestream starts at 7:00 PM, with the waiting room opening at 6:30 PM, simularily the doors open at 6:30 PM and the show starts at 7:00.</p>
         <p>You can check the status of your ticket on this page., <a href="https://tickets.mastermindsyyc.xyz/check">tickets.mastermindsyyc.xyz</a>.</p>
 
-        <p>The livestream link will appear here (if applicable) <a href="$registerData.livestreamurl}">$registerData.livestreamurl</a></p>
+        <p>The livestream link will appear here (if applicable) <a href="${registerData.livestreamurl}">${registerData.livestreamurl}</a></p>
         <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
         <a href="mailto:malik@mastermindsyyc.xyz">Malik@mastermindsyyc.xyz</a>
         <p> All times are displayed in Mountain Time </p>
