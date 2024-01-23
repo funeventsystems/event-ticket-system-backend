@@ -198,8 +198,9 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 });
 
 
+
 app.post('/api/registershow', async (req, res) => {
- const { amount, ...registerData } = req.body;
+  const { amount, ticketType, ...registerData } = req.body; // Include ticketType in the request
 
   if (!Number.isInteger(amount) || amount <= 0) {
     return res.status(400).json({ error: 'Invalid ticket amount' });
@@ -426,7 +427,11 @@ async function sendEmail(registerData, pdfBuffer, uniqueIds) {
         <p>Thank you for registering MASTERMINDS. Your unique access ID is: ${uniqueId}.</p>
         <p>Your selected date is: ${registerData.date}</p>
         <p> The livestream starts at 7:00 PM, with the waiting room opening at 6:30 PM, simularily the doors open at 6:30 PM and the show starts at 7:00.</p>
-        <p>This can be used on the MASTERMINDS digital ticket page, <a href="https://tickets.mastermindsyyc.xyz/check">tickets.mastermindsyyc.xyz</a>.</p>
+        <p>You can check the status of your ticket on this page., <a href="https://tickets.mastermindsyyc.xyz/check">tickets.mastermindsyyc.xyz</a>.</p>
+         <!-- Check if there is a livestream URL and include it in the email -->
+        ${registerData.ticketType === 'virtual' && registerData.livestreamurl
+          ? `<p>Join the livestream <a href="${registerData.livestreamurl}">here</a>.</p>`
+          : ''}
         <p><strong>If for whatever reason you need to have the date changed, or can no longer come please email us.</strong></p>
         <a href="mailto:malik@mastermindsyyc.xyz">Malik@mastermindsyyc.xyz</a>
         <p> All times are displayed in Mountain Time </p>
