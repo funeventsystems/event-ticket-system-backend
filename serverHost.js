@@ -264,7 +264,7 @@ async function generatePDF(uniqueIds) {
 
     // Add the logo on each page
     function addLogo() {
-      doc.image('logo.png', 50, 50, { width: 100 });
+      doc.image('logo2.png', 50, 50, { width: 100 });
     }
 
     // Add title and show information on each page
