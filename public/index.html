@@ -31,22 +31,25 @@
     <div id="ticket-result"></div>
 
     <h1>Admin Setup</h1>
-    <!-- Admin Setup Form -->
-    <form id="admin-setup-form">
-        <label for="date">Select Date:</label><br>
-        <input type="radio" id="date1" name="date" value="2024-5-15" required>
-        <label for="date1">May 15th</label><br>
-        <input type="radio" id="date2" name="date" value="2024-5-16" required>
-        <label for="date2">May 16th</label><br>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required>
+<!-- Admin Setup Form -->
+<form id="admin-setup-form">
+    <label>Select Date:</label><br>
+    <input type="radio" id="date1" name="date" value="2024-5-15" required>
+    <label for="date1">May 15th</label><br>
+    <input type="radio" id="date2" name="date" value="2024-5-16" required>
+    <label for="date2">May 16th</label><br>
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" required>
+    <label for="amount">Ticket Amount:</label>
+    <input type="number" id="amount" name="amount" min="1" required>
 
-        <!-- Use type="number" for the amount input -->
-        <label for="amount">Ticket Amount:</label>
-        <input type="number" id="amount" name="amount" min="1" required>
+    <!-- New checkbox for virtual ticket option -->
+    <label for="virtualTicket">Virtual Ticket:</label>
+    <input type="checkbox" id="virtualTicket" name="virtualTicket">
 
-        <button type="submit">Setup Ticket</button>
-    </form>
+    <button type="submit">Setup Ticket</button>
+</form>
+
     
     <div id="success-screen" class="success-screen"></div>
 
@@ -75,36 +78,37 @@
             }
         });
 
-                adminSetupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const selectedDate = document.querySelector('input[name="date"]:checked');
-            const date = selectedDate ? selectedDate.value : '';
-            const email = emailInput.value;
-            const amount = parseInt(amountInput.value, 10);
+               adminSetupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const selectedDate = document.querySelector('input[name="date"]:checked');
+    const date = selectedDate ? selectedDate.value : '';
+    const email = emailInput.value;
+    const amount = parseInt(amountInput.value, 10);
+    const virtualTicket = document.getElementById('virtualTicket').checked;
 
-            const response = await fetch('/api/registershow', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ date, email, amount }),
-            });
+    const response = await fetch('/api/registershow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ date, email, amount, virtualTicket }),
+    });
 
-            const data = await response.json();
-            if (response.ok) {
-                // Show the green success screen
-                const successScreen = document.getElementById('success-screen');
-                successScreen.style.opacity = '1';
-                successScreen.style.pointerEvents = 'auto';
+    const data = await response.json();
+    if (response.ok) {
+        // Show the green success screen
+        successScreen.style.opacity = '1';
+        successScreen.style.pointerEvents = 'auto';
 
-                // Reload the page after a delay
-                setTimeout(() => {
-                    location.reload();
-                }, 2000); // Adjust the delay as needed (2 seconds in this example)
-            } else {
-                adminSetupResult.innerHTML = `<p>${data.error}</p>`;
-            }
-        });
+        // Reload the page after a delay
+        setTimeout(() => {
+            location.reload();
+        }, 2000); // Adjust the delay as needed (2 seconds in this example)
+    } else {
+        adminSetupResult.innerHTML = `<p>${data.error}</p>`;
+    }
+});
+
         const giftTicketForm = document.getElementById('gift-ticket-form');
 const recipientEmailInput = document.getElementById('recipientEmail');
 const senderNameInput = document.getElementById('senderName');
