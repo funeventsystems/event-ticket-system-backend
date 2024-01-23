@@ -215,10 +215,10 @@ app.post('/api/registershow', async (req, res) => {
     const newRegister = { ...registerData, id: uniqueId };
 
     if (newRegister.date === '2024-5-15') {
-      newRegister.livestreamurl = 'https://youtube.com';
+      newRegister.livestreamurl = 'https://mastermindsyyc.xyz/show1';
     }
     if (newRegister.date === '2024-5-16') {
-      newRegister.livestreamurl = 'show2.url';
+      newRegister.livestreamurl = 'https://mastermindsyyc.xyz/show2';
     }
 
     upcomingRegister.push(newRegister);
