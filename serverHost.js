@@ -207,29 +207,29 @@ app.get('/api/ticket/:ticketId', (req, res) => {
 
 
 app.post('/api/registershow', async (req, res) => {
-  const { amount, ticketType, ...registerData } = req.body; // Include ticketType in the request
+  const { amount, ticketType, ...registerData } = req.body;
 
   if (!Number.isInteger(amount) || amount <= 0) {
-    return res.status(400).json({ error: 'Invalid ticket amount' });
+      return res.status(400).json({ error: 'Invalid ticket amount' });
   }
 
   const upcomingRegister = JSON.parse(fs.readFileSync('tickets.json'));
   const uniqueIds = [];
 
   for (let i = 0; i < amount; i++) {
-    const uniqueId = generateUniqueId(6);
-    uniqueIds.push(uniqueId);
+      const uniqueId = generateUniqueId(6);
+      uniqueIds.push(uniqueId);
 
-    const newRegister = { ...registerData, id: uniqueId };
+      const newRegister = { ...registerData, id: uniqueId, ticketType }; // Include ticketType in the new registration
 
-    if (newRegister.date === '2024-5-15') {
-      newRegister.livestreamurl = 'https://mastermindsyyc.xyz/show1';
-    }
-    if (newRegister.date === '2024-5-16') {
-      newRegister.livestreamurl = 'https://mastermindsyyc.xyz/show2';
-    }
+      if (newRegister.date === '2024-5-15') {
+          newRegister.livestreamurl = 'https://mastermindsyyc.xyz/show1';
+      }
+      if (newRegister.date === '2024-5-16') {
+          newRegister.livestreamurl = 'https://mastermindsyyc.xyz/show2';
+      }
 
-    upcomingRegister.push(newRegister);
+      upcomingRegister.push(newRegister);
   }
 
   fs.writeFileSync('tickets.json', JSON.stringify(upcomingRegister, null, 2));
@@ -237,15 +237,14 @@ app.post('/api/registershow', async (req, res) => {
 
   // Queue the generation and email sending process
   requestQueue.push({
-    handler: async () => {
-      const pdfBuffer = await generatePDF(uniqueIds);
-      await sendEmail(registerData, pdfBuffer, uniqueIds);
-    },
+      handler: async () => {
+          const pdfBuffer = await generatePDF(uniqueIds);
+          await sendEmail(registerData, pdfBuffer, uniqueIds);
+      },
   });
 
   processQueue(); // Start processing the queue
 });
-
 
 async function generatePDF(uniqueIds) {
   const doc = new PDFDocument();
