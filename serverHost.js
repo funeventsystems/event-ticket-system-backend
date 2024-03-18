@@ -42,6 +42,13 @@ app.use(express.static(staticDir));
 app.get('/', (red, res) => {
   res.sendFile(path.join(staticDir, 'home.html'));
 });
+app.get('/register-page', (red, res) => {
+  res.sendFile(path.join(staticDir, 'register.html'));
+});
+app.get('/verify-page', (red, res) => {
+  res.sendFile(path.join(staticDir, 'verify-old.html'));
+});
+
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
