@@ -1,17 +1,57 @@
-<form id="admin-setup-form" action="/api/registershow" method="POST">
-    <label>Select Date:</label><br>
-    <input type="radio" id="date1" name="date" value="2024-5-15" required>
-    <label for="date1">May 15th</label><br>
-    <input type="radio" id="date2" name="date" value="2024-5-16" required>
-    <label for="date2">May 16th</label><br>
-    <label for="email">Email:</label>
-    <input type="text" id="email" name="email" required>
-    <label for="amount">Ticket Amount:</label>
-    <input type="number" id="amount" name="amount" min="1" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style> 
+        /* CSS for the green screen */
+        .success-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: green;
+            opacity: 0;
+            transition: opacity 2s;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lookup Ticket</h1>
+    <form action="/api/lookup" method="GET">
+        <label for="ticketId">Ticket ID:</label>
+        <input type="text" id="ticketId" name="ticketId" required>
+        <button type="submit">Lookup</button>
+    </form>
+    <div id="ticket-result"></div>
 
-    <!-- New checkbox for virtual ticket option -->
-    <label for="virtualTicket">Virtual Ticket:</label>
-    <input type="checkbox" id="virtualTicket" name="virtualTicket">
+    <h1>Admin Setup</h1>
+    <!-- Admin Setup Form -->
+    <form action="/api/registershow" method="POST">
+        <label>Select Date:</label><br>
+        <input type="radio" id="date1" name="date" value="2024-5-15" required>
+        <label for="date1">May 15th</label><br>
+        <input type="radio" id="date2" name="date" value="2024-5-16" required>
+        <label for="date2">May 16th</label><br>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+        <label for="amount">Ticket Amount:</label>
+        <input type="number" id="amount" name="amount" min="1" required>
 
-    <button type="submit">Setup Ticket</button>
-</form>
+        <!-- New checkbox for virtual ticket option -->
+        <label for="virtualTicket">Virtual Ticket:</label>
+        <input type="checkbox" id="virtualTicket" name="virtualTicket">
+
+        <button type="submit">Setup Ticket</button>
+    </form>
+
+    <div id="success-screen" class="success-screen"></div>
+
+    <div id="admin-setup-result"></div>
+</body>
+</html>
